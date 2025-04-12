@@ -1,0 +1,100 @@
+<!-- frontend/profile.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Skill Exchange</title>
+    <link rel="stylesheet" href="css/style.css"> <!-- Link existing CSS -->
+    <link rel="stylesheet" href="css/profile.css"> <!-- Link new CSS for keywords -->
+</head>
+<body>
+    <h1 id = "page-title">My Profile</h1>
+    <div id="profile-info">
+        <p><strong>Name:</strong> <span id="profile-name">Loading...</span></p>
+        <!-- <p><strong>Email:</strong> <span id="profile-email">Loading...</span></p> -->
+
+        <p class="self-only"><strong>Tokens:</strong> <span id="profile-tokens" style="font-weight: bold; color: #DAA520;">?</span> 🪙</p>
+        <p><strong>Location (Zip):</strong> <span id="profile-location">Loading...</span></p>
+
+        <p class = "self-only"><strong>Email:</strong> <span id="profile-email">Loading...</span></p>
+        <hr> <!-- Separator -->
+        <div class = "self-only">
+            <h2>Community Members</h2>
+            <div id="user-list-container">
+                <p>Loading community members...</p>
+            </div>
+
+        </div>
+        
+
+        <h2>Skills Offered</h2>
+        <p id="profile-offer-text">Loading...</p> <!-- Raw text -->
+        <div class="keywords-container">
+             <strong>Keywords:</strong>
+             <span id="profile-offer-keywords" class="keywords-list">Loading...</span>
+        </div>
+
+         <!-- NEW: Request Button Area (Shown only for others) -->
+         <div class="other-only" id="request-action-area" style="display: none; margin-top: 15px;">
+            <button id="request-skill-button">Request Skill</button>
+            <!-- We might later add a dropdown or target specific keywords -->
+             <p id="request-message" style="margin-top: 5px;"></p> <!-- Feedback for request action -->
+        </div>
+
+        <div class = "self-only">
+            <h2>Skills Needed</h2>
+            <p id="profile-need-text">Loading...</p> <!-- Raw text -->
+            <div class="keywords-container">
+             <strong>Keywords:</strong>
+             <span id="profile-need-keywords" class="keywords-list">Loading...</span>
+            </div>
+        </div>
+        
+
+
+        <hr> <!-- Separator -->
+
+         <!-- NEW: Skill Search Section -->
+         <h2>Find Skills Nearby</h2>
+         <form id="skill-search-form">
+              <label for="search-query">Search for skill:</label>
+              <input type="text" id="search-query" name="query" placeholder="e.g., gardening, javascript, painting" required>
+              <button type="submit">Search</button>
+         </form>
+         <div id="search-results-container">
+              <!-- Search results will be displayed here -->
+              <p>Enter a skill above to find providers nearby.</p>
+         </div>
+
+         <hr> <!-- Separator -->
+
+         <!-- NEW: Incoming Requests Section -->
+         <h2 class="self-only">Incoming Skill Requests</h2>
+         <div id="incoming-requests-container" class="requests-list-container self-only">
+             <p>Loading incoming requests...</p>
+         </div>
+         <!-- END NEW -->
+ 
+         <hr> <!-- Separator -->
+ 
+         <!-- NEW: Outgoing Requests Section -->
+         <h2 class = "self-only">My Outgoing Requests</h2>
+         <div id="outgoing-requests-container" class="requests-list-container self-only">
+             <p>Loading outgoing requests...</p>
+         </div>
+         <!-- END NEW -->
+ 
+         <hr> <!-- Separator -->
+ 
+
+        <p><em>Member since: <span id="profile-created">Loading...</span></em></p>
+    </div>
+    <button id="logout-button" class = "self-only">Logout</button>
+    <p id="message"></p>
+
+    <script src="js/api.js"></script>
+    <script src="js/profile.js"></script>
+    <script src="js/auth.js"></script> <!-- Keep for logout -->
+</body>
+</html>

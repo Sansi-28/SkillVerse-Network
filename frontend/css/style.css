@@ -1,0 +1,70 @@
+/* frontend/css/style.css */
+body {
+    font-family: sans-serif;
+    margin: 20px;
+    line-height: 1.6;
+}
+
+h1 {
+    color: #333;
+}
+
+form div {
+    margin-bottom: 10px;
+}
+
+label {
+    display: block;
+    margin-bottom: 3px;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea {
+    width: 95%;
+    max-width: 400px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+textarea {
+    resize: vertical;
+}
+
+button {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#message {
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+#profile-info p {
+    margin-bottom: 8px;
+}
+
+#profile-info strong {
+     display: inline-block;
+     min-width: 120px; /* Adjust as needed */
+}
+
+#logout-button {
+    margin-top: 20px;
+    background-color: #dc3545;
+}
+#logout-button:hover {
+     background-color: #c82333;
+}

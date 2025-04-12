@@ -1,0 +1,243 @@
+/* frontend/css/profile.css */
+
+#profile-info h2 {
+    margin-top: 20px;
+    margin-bottom: 5px;
+    color: #555;
+    font-size: 1.1em;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 3px;
+}
+
+#profile-info p { /* Target paragraphs within profile info */
+    margin-bottom: 10px;
+    margin-left: 5px; /* Indent text slightly */
+    color: #333;
+}
+
+.keywords-container {
+    margin-top: 5px;
+    margin-left: 5px; /* Match paragraph indent */
+    margin-bottom: 15px;
+}
+
+.keywords-list span.keyword-tag {
+    display: inline-block;
+    background-color: #e0e0e0;
+    color: #333;
+    padding: 3px 8px;
+    border-radius: 12px; /* Pill shape */
+    margin-right: 5px;
+    margin-bottom: 5px; /* Allow wrapping */
+    font-size: 0.9em;
+}
+
+.keywords-list span.no-keywords {
+    font-style: italic;
+    color: #777;
+}
+
+#user-list-container {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    max-height: 400px; /* Optional: limit height and add scroll */
+    overflow-y: auto;   /* Optional: enable scroll if content exceeds max-height */
+}
+
+.user-list-item {
+    border-bottom: 1px solid #eee;
+    padding: 10px 5px;
+    margin-bottom: 5px;
+}
+.user-list-item:last-child {
+    border-bottom: none; /* Remove border from last item */
+}
+
+.user-list-item strong { /* User name */
+    font-size: 1.1em;
+    color: #0056b3;
+}
+
+.user-list-item .location { /* Location */
+    color: #555;
+    font-size: 0.9em;
+    margin-left: 10px;
+}
+
+.user-list-item .keywords-preview { /* Offer keywords preview */
+    margin-top: 5px;
+    font-size: 0.85em;
+    color: #666;
+}
+.user-list-item .keywords-preview .keyword-tag { /* Reuse keyword tag style */
+     background-color: #f0f0f0; /* Slightly different background */
+     padding: 2px 6px;
+     font-size: 0.95em; /* Adjust size if needed */
+     margin-right: 4px;
+     margin-bottom: 3px;
+     border-radius: 10px;
+}
+
+/* --- NEW: Search Styles --- */
+#skill-search-form {
+    margin-top: 10px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f0f8ff; /* Light blue background */
+    border: 1px solid #cce5ff;
+    border-radius: 5px;
+}
+
+#skill-search-form label {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+#skill-search-form input[type="text"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    min-width: 250px; /* Give it some width */
+    margin-right: 10px;
+}
+
+#skill-search-form button {
+    padding: 8px 15px; /* Match input padding */
+    cursor: pointer;
+}
+
+#search-results-container {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    min-height: 50px; /* Ensure it's visible even when empty */
+    /* Optional: limit height and add scroll like user-list */
+    /* max-height: 300px; */
+    /* overflow-y: auto; */
+}
+#search-results-container p { /* Style default message */
+    color: #666;
+    font-style: italic;
+}
+/* Reuse user-list-item styles for search results */
+/*#search-results-container .user-list-item {
+     /* Styles are already defined above */
+     /* You can add overrides here if needed 
+}*/
+
+#request-action-area button {
+    background-color: #28a745; /* Green */
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+#request-action-area button:hover {
+     background-color: #218838;
+}
+#request-message { /* Style the feedback message area */
+    font-weight: bold;
+}
+
+.requests-list-container {
+    margin-top: 15px;
+    margin-bottom: 25px; /* More space after lists */
+    padding: 10px;
+    background-color: #fff; /* White background for contrast */
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    max-height: 450px; /* Limit height */
+    overflow-y: auto;   /* Enable scroll */
+}
+
+.request-item {
+    border-bottom: 1px solid #eee;
+    padding: 12px 8px;
+    margin-bottom: 8px;
+}
+.request-item:last-child {
+    border-bottom: none;
+}
+
+.request-item p {
+    margin: 4px 0; /* Space out lines within a request */
+    line-height: 1.5;
+}
+
+.request-item .skill {
+    font-weight: bold;
+    color: #0056b3; /* Blue for skill */
+}
+
+.request-item .user-name { /* Requester/Provider name */
+    font-style: italic;
+    color: #555;
+}
+
+.request-item .message {
+    background-color: #f8f9fa;
+    border-left: 3px solid #ccc;
+    padding: 5px 8px;
+    margin-top: 6px;
+    font-size: 0.95em;
+    color: #333;
+    white-space: pre-wrap; /* Preserve line breaks in message */
+}
+.request-item .message:empty { /* Hide if message is empty */
+    display: none;
+}
+
+
+.request-item .status {
+    display: inline-block; /* Allow styling */
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.85em;
+    font-weight: bold;
+    text-transform: capitalize; /* Nicer display */
+    margin-top: 5px;
+}
+
+/* Status-specific colors */
+.request-item .status.pending { background-color: #ffc107; color: #333; } /* Yellow */
+.request-item .status.accepted { background-color: #28a745; color: white; } /* Green */
+.request-item .status.declined { background-color: #dc3545; color: white; } /* Red */
+.request-item .status.completed { background-color: #6c757d; color: white; } /* Gray */
+
+
+.request-item .actions button {
+    margin-top: 8px;
+    margin-right: 8px;
+    padding: 5px 10px;
+    font-size: 0.9em;
+    cursor: pointer;
+    border-radius: 4px;
+    border: 1px solid transparent;
+}
+
+.request-item .actions .accept-button {
+    background-color: #28a745;
+    color: white;
+    border-color: #28a745;
+}
+.request-item .actions .accept-button:hover { background-color: #218838; }
+
+.request-item .actions .decline-button {
+    background-color: #dc3545;
+    color: white;
+    border-color: #dc3545;
+}
+.request-item .actions .decline-button:hover { background-color: #c82333; }
+
+/* Style for when actions are disabled */
+.request-item .actions button:disabled {
+    background-color: #ccc;
+    border-color: #ccc;
+    cursor: not-allowed;
+}
