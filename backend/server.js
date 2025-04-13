@@ -154,38 +154,6 @@ app.post('/api/auth/login', async (req, res) => {
  * Retrieves the profile information for the currently authenticated user.
  * This route is protected by the authMiddleware.
  */
-app.get('/api/users/me', authMiddleware, async (req, res) => {
-    // If code reaches here, authMiddleware has successfully verified the token
-    // and attached the user payload (containing userId) to req.user
-
-    try {
-        // Fetch the user's data using the userId from the validated token
-        const user = await dataStore.findUserById(req.user.userId);
-
-        // Check if the user still exists in our data store
-        if (!user) {
-             // This scenario is unlikely if the token is valid but acts as a safeguard
-             return res.status(404).json({ message: 'User associated with token not found' });
-        }
-
-        // Respond with the user's profile data (excluding sensitive info like passwordHash)
-        res.json({
-             id: user.id,
-             name: user.name,
-             email: user.email, // Be mindful about exposing email if privacy is a concern later
-             locationZip: user.locationZip,
-             offerText: user.offerText,
-             needText: user.needText,
-             offerKeywords: user.offerKeywords || [], // Ensure keywords array is returned
-             needKeywords: user.needKeywords || [],   // Ensure keywords array is returned
-             createdAt: user.createdAt
-         });
-    } catch (error) {
-        // Handle potential errors during profile fetching
-        console.error("Get Profile Error (/api/users/me):", error);
-        res.status(500).json({ message: 'Error fetching user profile' });
-    }
-});
 
 
 app.get('/api/users/me', authMiddleware, async (req, res) => {
