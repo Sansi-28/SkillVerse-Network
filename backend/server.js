@@ -33,6 +33,18 @@ app.use(cors());
 // Enable Express to parse JSON request bodies
 app.use(express.json());
 
+const FRONTEND_URL = process.env.FRONTEND_URL || '*'; // Will replace '*' with Render URL later
+
+const corsOptions = {
+  origin: FRONTEND_URL, 
+  optionsSuccessStatus: 200 
+};
+console.log(`CORS configured for origin: ${FRONTEND_URL}`); // Log for debugging
+
+app.use(cors(corsOptions)); 
+
+app.use(express.json());
+
 // --- API Routes ---
 
 // Simple GET route to check if the API is running
