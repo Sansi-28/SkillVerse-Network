@@ -17,6 +17,13 @@ const authMiddleware = require('./authMiddleware'); // Middleware to verify JWT 
 const app = express();
 const PORT = process.env.PORT || 3001; // Use port from .env or default to 3001
 const JWT_SECRET = process.env.JWT_SECRET; // Secret key for signing JWTs
+const FRONTEND_URL = process.env.FRONTEND_URL;
+
+// --- Crucial Security Check ---
+// ... (keep JWT check) ...
+if (!FRONTEND_URL) {
+    console.warn("WARN: FRONTEND_URL is not defined in environment variables. CORS might be too open or block requests.");
+}
 
 // --- Crucial Security Check ---
 if (!JWT_SECRET) {
@@ -24,6 +31,8 @@ if (!JWT_SECRET) {
     console.error("Server cannot start without a JWT secret.");
     process.exit(1); // Exit the application if the secret is missing
 }
+
+
 
 // --- Core Middleware ---
 // Enable Cross-Origin Resource Sharing for requests from your frontend origin
@@ -33,12 +42,13 @@ app.use(cors());
 // Enable Express to parse JSON request bodies
 app.use(express.json());
 
-const FRONTEND_URL = process.env.FRONTEND_URL || '*'; // Will replace '*' with Render URL later
-
+// --- Core Middleware ---
+// Configure CORS
 const corsOptions = {
-  origin: FRONTEND_URL, 
-  optionsSuccessStatus: 200 
+    origin: FRONTEND_URL, // Allow only your frontend origin
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
+
 console.log(`CORS configured for origin: ${FRONTEND_URL}`); // Log for debugging
 
 app.use(cors(corsOptions)); 
