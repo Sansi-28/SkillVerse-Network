@@ -14,45 +14,29 @@ const dataStore = require('./dataStore'); // Manages user data (in-memory)
 const authMiddleware = require('./authMiddleware'); // Middleware to verify JWT tokens
 
 // --- Configuration ---
-const app = express();
-const PORT = process.env.PORT || 3001; // Use port from .env or default to 3001
-const JWT_SECRET = process.env.JWT_SECRET; // Secret key for signing JWTs
-const FRONTEND_URL = process.env.FRONTEND_URL;
+const app = express(); // app must be created before use
+const PORT = process.env.PORT || 3001;
+const JWT_SECRET = process.env.JWT_SECRET;
+const FRONTEND_URL = process.env.FRONTEND_URL; // Get frontend URL from env
 
 // --- Crucial Security Check ---
-// ... (keep JWT check) ...
+// ... (JWT check) ...
 if (!FRONTEND_URL) {
     console.warn("WARN: FRONTEND_URL is not defined in environment variables. CORS might be too open or block requests.");
 }
 
-// --- Crucial Security Check ---
-if (!JWT_SECRET) {
-    console.error("FATAL ERROR: JWT_SECRET is not defined in .env file.");
-    console.error("Server cannot start without a JWT secret.");
-    process.exit(1); // Exit the application if the secret is missing
-}
+// --- Core Middleware --- <<<< THIS MUST COME BEFORE YOUR ROUTES (app.post, app.get, etc.)
 
-
-
-// --- Core Middleware ---
-// Enable Cross-Origin Resource Sharing for requests from your frontend origin
-// For development, allowing all origins is common, but restrict in production.
-app.use(cors());
-
-// Enable Express to parse JSON request bodies
-app.use(express.json());
-
-// --- Core Middleware ---
 // Configure CORS
 const corsOptions = {
     origin: FRONTEND_URL, // Allow only your frontend origin
-    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+    optionsSuccessStatus: 200 // For legacy browser compatibility
 };
+// IMPORTANT: Apply CORS middleware *before* routes
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // Explicitly handle OPTIONS requests for all routes
 
-console.log(`CORS configured for origin: ${FRONTEND_URL}`); // Log for debugging
-
-app.use(cors(corsOptions)); 
-
+// Enable Express to parse JSON request bodies (also before routes)
 app.use(express.json());
 
 // --- API Routes ---
