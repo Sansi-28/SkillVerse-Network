@@ -17,7 +17,7 @@ A community-driven skill exchange platform where users can share their expertise
 - **Backend**: Node.js with Express
 - **Authentication**: JWT (JSON Web Tokens)
 - **Natural Language Processing**: Natural.js for keyword extraction
-- **Database**: In-memory data store (for demonstration)
+- **Database**: SQLite (for demonstration)
 
 ## Project Structure
 
@@ -26,11 +26,13 @@ SkillVerse-Network/
 ├── frontend/
 │   ├── css/
 │   │   ├── style.css
-│   │   └── profile.css
+│   │   ├── profile.css
+│   │   └── home.css
 │   ├── js/
 │   │   ├── api.js
 │   │   ├── auth.js
 │   │   └── profile.js
+│   ├── index.html
 │   ├── login.html
 │   ├── signup.html
 │   └── profile.html
@@ -39,6 +41,8 @@ SkillVerse-Network/
     │   └── nlpProcessor.js
     ├── authMiddleware.js
     ├── dataStore.js
+    ├── db_init.js
+    ├── generate_users.js
     ├── server.js
     ├── package.json
     └── .env
@@ -64,12 +68,17 @@ JWT_SECRET=YOUR_SUPER_SECRET_KEY_GOES_HERE_MAKE_IT_RANDOM
 PORT=3001
 ```
 
-4. Start the backend server:
+4. Initialize the SQLite database:
+```bash
+node db_init.js
+```
+
+5. Start the backend server:
 ```bash
 node server.js
 ```
 
-5. Open the frontend in a web browser:
+6. Open the frontend in a web browser:
    - Navigate to `frontend/signup.html` to create an account
    - Or `frontend/login.html` if you already have an account
 
@@ -106,8 +115,7 @@ node server.js
 
 ## Development Notes
 
-- The project uses an in-memory data store for demonstration
-- For production, implement a proper database system
+- The project uses SQLite as the database for demonstration purposes
 - Add error logging and monitoring for production deployment
 - Consider adding email verification and password recovery
 
@@ -119,16 +127,17 @@ node server.js
 4. Push to the branch
 5. Open a Pull Request
 
-## License
+## Video Link
 
-[Add your chosen license here]
+https://youtu.be/CwFuLPOPBSU
 
 ## Author
 
-[Your Name]
+Santosh Singh  
+Rahul Kumar  
+Saidul Hussain Chudhury
 
 ## Acknowledgments
 
 - Natural.js for keyword extraction
 - Express.js community
-- [Add other acknowledgments]

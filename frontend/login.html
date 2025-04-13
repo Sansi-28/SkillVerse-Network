@@ -3,26 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Skill Exchange</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Login - SkillVerse Network</title>
+    <link rel="stylesheet" href="css/style.css"> <!-- Link updated style.css -->
 </head>
 <body>
-    <h1>Login</h1>
-    <form id="login-form">
-        <div>
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
+
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="navbar-brand">SkillVerse Network</a>
+            <div class="navbar-links">
+                <a href="login.html" class="nav-link">Login</a>
+                <a href="signup.html" class="nav-link button button-primary">Sign Up</a>
+            </div>
         </div>
-        <div>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
+    </nav>
+
+    <main class="container">
+        <div class="card auth-card"> <!-- Added card class -->
+            <h1>Login</h1>
+            <form id="login-form">
+                <div>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div>
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="button button-primary">Login</button>
+            </form>
+            <p id="message" class="info"></p> <!-- Default message class -->
+            <p class="auth-switch">Don't have an account? <a href="signup.html">Sign up here</a></p>
         </div>
-        <button type="submit">Login</button>
-    </form>
-    <p id="message"></p>
-    <p>Don't have an account? <a href="signup.html">Sign up here</a></p>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>© 2024 SkillVerse Network. All rights reserved.</p>
+        </div>
+    </footer>
 
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
+    <script>
+        // Add class to message element based on content
+        const messageEl = document.getElementById('message');
+        if (messageEl) {
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === "childList" && messageEl.textContent) {
+                        messageEl.className = messageEl.style.color === 'red' ? 'error' : 'success';
+                    } else if (!messageEl.textContent) {
+                         messageEl.className = 'info'; // Reset if empty
+                    }
+                });
+            });
+            observer.observe(messageEl, { childList: true, characterData: true, subtree: true });
+        }
+    </script>
 </body>
 </html>
