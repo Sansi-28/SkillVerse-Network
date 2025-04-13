@@ -1,5 +1,5 @@
 // frontend/js/api.js
-const API_BASE_URL = 'https://skillverse-network-server.onrender.com'; // Adjust if your backend runs elsewhere
+const API_BASE_URL = 'https://skillverse-network-server.onrender.com/api'; // Adjust if your backend runs elsewhere
 
 // Helper function to get the auth token
 function getAuthToken() {
