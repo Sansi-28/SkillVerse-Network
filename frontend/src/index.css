@@ -1,0 +1,18 @@
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif; /* A readable default */
+  color: #4a4a4a;
+  
+  /* The textured paper background from your example */
+  background-color: #f6eee3;
+  opacity: 1;
+  background-size: 20px 20px;
+  background-image: repeating-linear-gradient(0deg, #e5decf, #e5decf 1px, #f6eee3 1px, #f6eee3);
+  
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
