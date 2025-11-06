@@ -18,7 +18,8 @@ RUN mvn clean package -DskipTests
 
 # --- Run Stage ---
 # Use a lightweight JRE image for the final container
-FROM openjdk:17-jre-slim
+# THIS IS THE CORRECTED LINE:
+FROM eclipse-temurin:17-jre-alpine
 
 # Set the working directory
 WORKDIR /app
