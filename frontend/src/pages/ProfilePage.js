@@ -80,8 +80,7 @@ const ProfilePage = () => {
   if (error && !isEditMode) return <Typography color="error" align="center">{error}</Typography>;
   if (!profileData) return null;
 
-  const avatarUrl = profileData.avatarUrl ? `http://localhost:8080${profileData.avatarUrl}` : null;
-
+  const avatarUrl = profileData.avatarUrl ? `${process.env.REACT_APP_API_URL}${profileData.avatarUrl}` : null;
   return (
     <>
       <Container sx={{ py: 4, maxWidth: '800px !important' }}>

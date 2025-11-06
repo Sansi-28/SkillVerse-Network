@@ -1,7 +1,7 @@
 import axios from 'axios';
 import authService from './authService'; // <-- 1. IMPORT authService to get user data
 
-const API_URL = 'http://localhost:8080/api/listings';
+const API_URL = process.env.REACT_APP_API_URL + '/api/listings';
 
 // --- 2. THE MISSING HELPER FUNCTION ---
 // This function gets the current user's token and creates the required header object.

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // The base URL of our Spring Boot backend
-const API_URL = 'http://localhost:8080/api/auth/';
+const API_URL = process.env.REACT_APP_API_URL + '/api/auth/';
 
 // Function to handle user signup
 const signup = (name, email, password) => {

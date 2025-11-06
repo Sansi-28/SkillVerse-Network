@@ -1,7 +1,7 @@
 import axios from 'axios';
 import authService from './authService';
 
-const API_URL = 'http://localhost:8080/api/reports';
+const API_URL = process.env.REACT_APP_API_URL + '/api/reports';
 
 const getAuthHeaders = () => {
     const user = authService.getCurrentUser();
