@@ -15,7 +15,7 @@ services:
       context: ./frontend
       args:
         # For local testing, the backend is available at http://backend:8080
-        REACT_APP_API_URL: http://localhost:8080 
+        REACT_APP_API_URL: http://localhost:8080 || https://skillverse-network-backend.onrender.com
     ports:
       - "3000:80"
     depends_on:
