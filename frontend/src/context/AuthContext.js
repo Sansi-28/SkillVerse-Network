@@ -54,8 +54,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Keep backwards compatibility: expose `token` as well as `authToken`.
   const value = {
     authToken,
+    token: authToken,
     userProfile,
     login,
     logout,

@@ -95,7 +95,12 @@ public class SecurityConfig {
 
                                 // --- THIS IS THE FIX FOR UPLOADING ---
                                 // Only authenticated users can UPLOAD files.
-                                new AntPathRequestMatcher("/api/files/**", "POST")
+                                new AntPathRequestMatcher("/api/files/**", "POST"),
+                                new AntPathRequestMatcher("/api/messages/**", "GET"),
+                                new AntPathRequestMatcher("/api/messages/**", "POST"),
+                                new AntPathRequestMatcher("/api/notifications/**", "GET"),
+                                new AntPathRequestMatcher("/api/notifications/**", "POST"),
+                                new AntPathRequestMatcher("/api/availability/**")
 
                         ).authenticated()
                 )

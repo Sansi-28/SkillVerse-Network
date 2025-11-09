@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import userService from '../services/userService';
 import ProfileEditForm from '../components/ProfileEditForm';
 import ReportModal from '../components/ReportModal';
+import ComposeMessageDialog from '../components/ComposeMessageDialog';
 
 const ProfilePage = () => {
   const { id } = useParams();
@@ -19,8 +20,17 @@ const ProfilePage = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [reportModalOpen, setReportModalOpen] = useState(false);
 
-  const isOwnProfile = !id || (userProfile && userProfile.id.toString() === id);
+  
 
+  const isOwnProfile = !id || (userProfile && userProfile.id.toString() === id);
+  
+  const [composeOpen, setComposeOpen] = useState(false);
+
+  const presetRecipient = !isOwnProfile && profileData ? {
+    id: profileData.id,
+    name: profileData.name,
+    avatarUrl: profileData.avatarUrl
+  } : null;
   const fetchProfile = useCallback(async () => {
     setLoading(true);
     setError('');
@@ -128,6 +138,7 @@ const ProfilePage = () => {
             </Box>
 
             {/* The main action button for the page */}
+            
             {isOwnProfile ? (
               <Button variant="contained" onClick={() => setIsEditMode(!isEditMode)}>
                 {isEditMode ? 'Cancel' : 'Edit Profile'}
@@ -140,6 +151,11 @@ const ProfilePage = () => {
                 onClick={() => setReportModalOpen(true)}
               >
                 Report User
+              </Button>
+            )}
+            {!isOwnProfile && (
+              <Button variant="contained" color="primary" onClick={() => setComposeOpen(true)} sx={{ mr: 1 }}>
+                Message
               </Button>
             )}
           </Box>
@@ -188,6 +204,11 @@ const ProfilePage = () => {
           open={reportModalOpen}
           handleClose={() => setReportModalOpen(false)}
           reportedUser={profileData}
+      />
+      <ComposeMessageDialog
+        open={composeOpen}
+        onClose={() => setComposeOpen(false)}
+        presetRecipient={presetRecipient}
       />
     </>
   );
