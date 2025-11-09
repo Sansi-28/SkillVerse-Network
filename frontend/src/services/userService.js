@@ -1,38 +1,28 @@
-import axios from 'axios';
-import authService from './authService';
+import api from './api';
 
-const API_URL = process.env.REACT_APP_API_URL + '/api/users';
-// This separate URL is essential
-const FILE_API_URL = process.env.REACT_APP_API_URL + '/api/files';
-
-const getAuthHeaders = () => {
-    const user = authService.getCurrentUser();
-    if (user && user.accessToken) {
-        return { Authorization: `Bearer ${user.accessToken}` };
-    }
-    return {};
-};
+const API_URL = '/api/users';
+const FILE_API_URL = '/api/files';
 
 const getUserProfile = () => {
-  return axios.get(API_URL + '/me', { headers: getAuthHeaders() });
+  // THE FIX: Return response.data directly
+  return api.get(`${API_URL}/me`).then(res => res.data);
 };
 
 const getPublicProfile = (id) => {
-  return axios.get(API_URL + '/' + id);
+  // THE FIX: Return response.data directly
+  return api.get(`${API_URL}/${id}`).then(res => res.data);
 };
 
 const updateUserProfile = (profileData) => {
-  return axios.patch(API_URL + '/me', profileData, { headers: getAuthHeaders() });
+  return api.patch(`${API_URL}/me`, profileData);
 };
 
-// This function must use FILE_API_URL
 const uploadAvatar = (file) => {
     const formData = new FormData();
     formData.append('file', file);
 
-    return axios.post(`${FILE_API_URL}/upload/avatar`, formData, {
+    return api.post(`${FILE_API_URL}/upload/avatar`, formData, {
         headers: {
-            ...getAuthHeaders(),
             'Content-Type': 'multipart/form-data',
         },
     });

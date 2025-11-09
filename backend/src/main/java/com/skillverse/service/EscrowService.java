@@ -2,25 +2,16 @@
 package com.skillverse.service;
 
 import com.skillverse.model.entity.*;
-import com.skillverse.model.entity.Booking;
-import com.skillverse.model.entity.Listing;
-import com.skillverse.model.entity.Transaction;
-import com.skillverse.model.entity.User;
 import com.skillverse.model.enums.BookingStatus;
-import com.skillverse.model.enums.TransactionType;
 import com.skillverse.repository.BookingRepository;
 import com.skillverse.repository.TransactionRepository;
-//import jakarta.transaction.Transaction;
 import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
-
-import jakarta.validation.constraints.NotNull;
-import org.springframework.stereotype.Service;
 
 @Service
 public class EscrowService {
@@ -37,42 +28,40 @@ public class EscrowService {
         this.notifications = notifications;
     }
 
+    /**
+     * NOTE: This method is currently redundant. The active scheduler
+     * (@see BookingEscrowScheduler) calls the more complete auto-release logic
+     * in BookingService. This method is maintained to resolve compilation but
+     * should be considered for removal in a future refactor.
+     */
     @Transactional
     public int autoRelease(Duration after) {
         Instant cutoff = Instant.now().minus(after);
-        List<Booking> eligible = bookings.findAllByStatusAndBookingTimeBefore(BookingStatus.CONFIRMED, LocalDateTime.from(cutoff));
+        LocalDateTime cutoffDateTime = LocalDateTime.ofInstant(cutoff, java.time.ZoneId.systemDefault());
+
+        List<Booking> eligible = bookings.findAllByStatusAndBookingTimeBefore(BookingStatus.CONFIRMED, cutoffDateTime);
         int count = 0;
         for (Booking b : eligible) {
             Listing listing = b.getListing();
             User learner = b.getLearner();
             User teacher = listing.getTeacher();
-            @NotNull BigDecimal amount = listing.getTokenPrice(); // adjust type if BigDecimal in your model
 
-            // Create transactions
-            Transaction debit = new Transaction();
-            debit.setBooking(b);
-            debit.setUser(learner);
-            debit.setType(TransactionType.DEBIT);
-            debit.setAmount(amount);
-            debit.setCreatedAt(LocalDateTime.from(Instant.now()));
-            transactions.save(debit);
-
-            Transaction credit = new Transaction();
-            credit.setBooking(b);
-            credit.setUser(teacher);
-            credit.setType(TransactionType.CREDIT);
-            credit.setAmount(amount);
-            credit.setCreatedAt(LocalDateTime.from(Instant.now()));
-            transactions.save(credit);
-
-            // Update booking status
             b.setStatus(BookingStatus.COMPLETED);
+            bookings.save(b);
 
-            // Notify
-            notifications.notifyMessage(teacher.getId(), learner.getId(), null,
-                    "Escrow released for your session; tokens credited.");
-            notifications.notifyMessage(learner.getId(), teacher.getId(), null,
-                    "Escrow auto‑released 48h after the session time.");
+            // Notify Teacher
+            notifications.create(teacher,
+                    Notification.Type.ESCROW_RELEASED, // <-- THE FIX: Added Notification.Type
+                    "Funds Auto-Released",
+                    "Funds for your session with " + learner.getName() + " were automatically released.",
+                    b);
+
+            // Notify Learner
+            notifications.create(learner,
+                    Notification.Type.ESCROW_RELEASED, // <-- THE FIX: Added Notification.Type
+                    "Funds Auto-Released",
+                    "Funds for your session with " + teacher.getName() + " were automatically released after 48 hours.",
+                    b);
             count++;
         }
         return count;

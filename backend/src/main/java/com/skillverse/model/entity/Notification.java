@@ -11,7 +11,13 @@ import java.time.Instant;
 public class Notification {
 
     public enum Type {
-        MESSAGE, BOOKING_ACCEPTED, BOOKING_REJECTED, BOOKING_COMPLETED, ESCROW_RELEASED, DISPUTE_OPENED
+        MESSAGE,
+        BOOKING_REQUESTED, // <-- NEW
+        BOOKING_ACCEPTED,
+        BOOKING_REJECTED,
+        BOOKING_COMPLETED,
+        ESCROW_RELEASED,
+        DISPUTE_OPENED
     }
 
     @Id
@@ -132,6 +138,4 @@ public class Notification {
     public void setMetadataJson(String metadataJson) {
         this.metadataJson = metadataJson;
     }
-
-    // getters and setters omitted
 }

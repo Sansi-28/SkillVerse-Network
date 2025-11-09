@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Data
@@ -29,4 +30,14 @@ public class Booking {
     @NotNull
     @Enumerated(EnumType.STRING)
     private BookingStatus status;
+
+    @Column(unique = true)
+    private String sessionRoomId;
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.sessionRoomId == null) {
+            this.sessionRoomId = UUID.randomUUID().toString();
+        }
+    }
 }

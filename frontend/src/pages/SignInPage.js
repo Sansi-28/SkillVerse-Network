@@ -1,17 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box } from '@mui/material';
 import SignInCard from '../components/SignInCard';
+import SignUpCard from '../components/SignUpCard'; // <-- IMPORT
 
 const SignInPage = () => {
+  const [isLoginView, setIsLoginView] = useState(true);
+
+  const toggleView = () => setIsLoginView(!isLoginView);
+
   return (
     <Box 
       sx={{
         display: 'grid',
         placeItems: 'center',
-        flexGrow: 1, // This makes it take up all available space
+        flexGrow: 1,
+        py: 4
       }}
     >
-      <SignInCard />
+      {isLoginView ? (
+        <SignInCard onToggle={toggleView} />
+      ) : (
+        <SignUpCard onToggle={toggleView} />
+      )}
     </Box>
   );
 };

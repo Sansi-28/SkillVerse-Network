@@ -2,16 +2,16 @@ import React, { useState } from 'react';
 import { Card, CardContent, Typography, Box, TextField, Button, CircularProgress } from '@mui/material';
 import { User, KeyRound } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext'; // Import the auth hook
+import { useAuth } from '../context/AuthContext';
 
-const SignInCard = () => {
+const SignInCard = ({ onToggle }) => { // <-- Add onToggle prop
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const navigate = useNavigate();
-  const { login } = useAuth(); // Get the login function from our context
+  const { login } = useAuth();
 
   const handleSignIn = async (e) => {
     e.preventDefault();
@@ -19,7 +19,7 @@ const SignInCard = () => {
     setLoading(true);
     try {
       await login(email, password);
-      navigate('/'); // Redirect to homepage on successful login
+      navigate('/');
     } catch (err) {
       setError('Failed to sign in. Please check your credentials.');
       console.error(err);
@@ -34,7 +34,6 @@ const SignInCard = () => {
           Sign In
         </Typography>
         
-        {/* Email Field */}
         <Box sx={{ display: 'flex', alignItems: 'flex-end', mb: 3 }}>
           <User size={32} style={{ marginRight: '12px', marginBottom: '4px' }}/>
           <TextField 
@@ -47,7 +46,6 @@ const SignInCard = () => {
           />
         </Box>
 
-        {/* Password Field */}
         <Box sx={{ display: 'flex', alignItems: 'flex-end', mb: 4 }}>
           <KeyRound size={32} style={{ marginRight: '12px', marginBottom: '4px' }}/>
           <TextField 
@@ -76,6 +74,9 @@ const SignInCard = () => {
           sx={{ py: 1.5, fontSize: '1.3rem' }}
         >
           {loading ? <CircularProgress size={28} color="inherit" /> : 'Sign In'}
+        </Button>
+        <Button onClick={onToggle} fullWidth sx={{ mt: 2, textTransform: 'none' }}>
+            Don't have an account? Sign Up
         </Button>
       </CardContent>
     </Card>

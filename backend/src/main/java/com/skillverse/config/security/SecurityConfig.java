@@ -44,6 +44,7 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
+        // Be more specific in production, e.g., your actual frontend URL
         configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://skillverse-network-frontend.onrender.com"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
@@ -79,10 +80,10 @@ public class SecurityConfig {
                                 new AntPathRequestMatcher("/api/listings", "GET"),
                                 new AntPathRequestMatcher("/api/listings/**", "GET"),
                                 new AntPathRequestMatcher("/api/users/**", "GET"),
+                                new AntPathRequestMatcher("/api/files/**", "GET"),
 
-                                // --- THIS IS THE FIX FOR VIEWING ---
-                                // Anyone can VIEW files (e.g., avatars).
-                                new AntPathRequestMatcher("/api/files/**", "GET")
+                                // --- THE FIX: Allow WebSocket handshake connections ---
+                                new AntPathRequestMatcher("/ws/**")
 
                         ).permitAll()
 
@@ -92,17 +93,17 @@ public class SecurityConfig {
                                 new AntPathRequestMatcher("/api/users/me", "PATCH"),
                                 new AntPathRequestMatcher("/api/bookings/**"),
                                 new AntPathRequestMatcher("/api/reports/**"),
-
-                                // --- THIS IS THE FIX FOR UPLOADING ---
-                                // Only authenticated users can UPLOAD files.
+                                new AntPathRequestMatcher("/api/files/**", "GET"),
                                 new AntPathRequestMatcher("/api/files/**", "POST"),
-                                new AntPathRequestMatcher("/api/messages/**", "GET"),
-                                new AntPathRequestMatcher("/api/messages/**", "POST"),
-                                new AntPathRequestMatcher("/api/notifications/**", "GET"),
-                                new AntPathRequestMatcher("/api/notifications/**", "POST"),
-                                new AntPathRequestMatcher("/api/availability/**")
+                                new AntPathRequestMatcher("/api/messages/**"),
+                                new AntPathRequestMatcher("/api/notifications/**"),
+                                new AntPathRequestMatcher("/api/availability/**"),
+                                new AntPathRequestMatcher("/api/reviews/**")
 
                         ).authenticated()
+
+                        // Default fallback: any other request must be authenticated
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

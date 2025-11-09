@@ -5,30 +5,29 @@ import userService from '../services/userService';
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  // We now store the JWT token and the user's profile data separately.
   const [authToken, setAuthToken] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
 
-  // This function fetches the user's profile from our new /api/users/me endpoint.
-  const fetchUserProfile = useCallback(async (token) => {
+  // --- THE FIX IS HERE ---
+  const fetchUserProfile = useCallback(async () => {
     try {
-      const profile = await userService.getUserProfile(token);
-      setUserProfile(profile.data);
+      // userService.getUserProfile() now returns the data object directly.
+      const profileData = await userService.getUserProfile();
+      // We must set the state with the data object itself, not profileData.data
+      setUserProfile(profileData);
     } catch (error) {
       console.error("Failed to fetch user profile", error);
-      // If fetching fails, the token is likely invalid, so we log out.
-      logout();
+      logout(); // Log out if the token is invalid and we can't get a profile
     }
   }, []);
+  // --- END OF FIX ---
 
-  // When the app loads, check local storage for a token.
+  // On initial app load, check for an existing session in localStorage
   useEffect(() => {
     const storedUser = authService.getCurrentUser();
     if (storedUser && storedUser.accessToken) {
-      const token = storedUser.accessToken;
-      setAuthToken(token);
-      // Pass token directly to avoid stale state issues
-      fetchUserProfile(token);
+      setAuthToken(storedUser.accessToken);
+      fetchUserProfile();
     }
   }, [fetchUserProfile]);
 
@@ -36,9 +35,15 @@ export const AuthProvider = ({ children }) => {
     const storedUser = await authService.login(email, password);
     if (storedUser && storedUser.accessToken) {
       setAuthToken(storedUser.accessToken);
-      await fetchUserProfile(storedUser.accessToken); // Fetch profile right after login.
+      await fetchUserProfile(); // This will now work correctly
     }
     return storedUser;
+  };
+
+  const signup = async (name, email, password) => {
+    await authService.signup(name, email, password);
+    // After a successful signup, automatically log the new user in.
+    await login(email, password);
   };
 
   const logout = () => {
@@ -50,18 +55,18 @@ export const AuthProvider = ({ children }) => {
   const refreshUserProfile = () => {
     const storedUser = authService.getCurrentUser();
     if (storedUser && storedUser.accessToken) {
-      fetchUserProfile(storedUser.accessToken);
+      fetchUserProfile();
     }
   };
 
-  // Keep backwards compatibility: expose `token` as well as `authToken`.
   const value = {
     authToken,
     token: authToken,
     userProfile,
     login,
+    signup,
     logout,
-    refreshUserProfile, // Expose the refresh function
+    refreshUserProfile,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
