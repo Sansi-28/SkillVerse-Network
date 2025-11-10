@@ -1,46 +1,41 @@
-import axios from 'axios';
-import authService from './authService';
+import api from './api';
 
-const API_URL = process.env.REACT_APP_API_URL + '/api/bookings';
-
-const getAuthHeaders = () => {
-    const user = authService.getCurrentUser();
-    if (user && user.accessToken) {
-        return { Authorization: `Bearer ${user.accessToken}` };
-    }
-    return {};
-};
+const API_URL = '/api/bookings';
 
 const sendBookingRequest = (listingId) => {
-  return axios.post(API_URL, { listingId }, { headers: getAuthHeaders() });
+  return api.post(API_URL, { listingId });
 };
 
 const acceptBooking = (bookingId) => {
-    return axios.post(`${API_URL}/${bookingId}/accept`, {}, { headers: getAuthHeaders() });
+    return api.post(`${API_URL}/${bookingId}/accept`);
 };
 
 const rejectBooking = (bookingId) => {
-    return axios.post(`${API_URL}/${bookingId}/reject`, {}, { headers: getAuthHeaders() });
+    return api.post(`${API_URL}/${bookingId}/reject`);
 };
 
-// --- NEW FUNCTION ---
 const completeBooking = (bookingId) => {
-    return axios.post(`${API_URL}/${bookingId}/complete`, {}, { headers: getAuthHeaders() });
+    return api.post(`${API_URL}/${bookingId}/complete`);
+};
+
+const openDispute = (bookingId) => {
+    return api.post(`${API_URL}/${bookingId}/dispute`);
 };
 
 const getSentRequests = () => {
-    return axios.get(`${API_URL}/sent`, { headers: getAuthHeaders() });
+    return api.get(`${API_URL}/sent`);
 };
 
 const getReceivedRequests = () => {
-    return axios.get(`${API_URL}/received`, { headers: getAuthHeaders() });
+    return api.get(`${API_URL}/received`);
 };
 
 const bookingService = {
   sendBookingRequest,
   acceptBooking,
   rejectBooking,
-  completeBooking, // <-- Add to export
+  completeBooking,
+  openDispute,
   getSentRequests,
   getReceivedRequests
 };

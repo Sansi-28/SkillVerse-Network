@@ -19,6 +19,7 @@ public class BookingDtos {
             String teacherName,
             BigDecimal tokenPrice,
             BookingStatus status,
-            LocalDateTime bookingTime
+            LocalDateTime bookingTime,
+            String sessionRoomId
     ) {}
 }

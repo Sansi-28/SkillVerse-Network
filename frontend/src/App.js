@@ -13,6 +13,8 @@ import ProfilePage from './pages/ProfilePage';
 import DashboardPage from './pages/DashboardPage';
 import SearchPage from './pages/SearchPage';
 import CreateListingPage from './pages/CreateListingPage';
+import InboxPage from './pages/InboxPage';
+import VideoSessionPage from './pages/VideoSessionPage'; // Import the new page
 
 function App() {
   return (
@@ -31,6 +33,8 @@ function App() {
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/search" element={<SearchPage />} />
               <Route path="/create-listing" element={<CreateListingPage />} />
+              <Route path="/inbox" element={<InboxPage />} />
+              <Route path="/session/:roomId" element={<VideoSessionPage />} /> {/* Add the route */}
             </Routes>
           </MainLayout>
         </AuthProvider>

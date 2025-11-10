@@ -4,6 +4,7 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import nftCoin from '../resources/nft.png';
 import { Search, PlusCircle } from 'lucide-react';
+import NotificationBell from './NotificationBell';
 
 const Navbar = () => {
   const { userProfile, logout } = useAuth();
@@ -168,6 +169,8 @@ const Navbar = () => {
                 >
                   My Profile
                 </Button>
+                <Button component={RouterLink} to="/inbox" sx={{ color: 'text.primary' }}>Inbox</Button>
+                <NotificationBell />
                 <Button 
                   onClick={handleLogout} 
                   sx={{ 

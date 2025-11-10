@@ -16,6 +16,16 @@ public class BookingController {
 
     @Autowired private BookingService bookingService;
 
+    // DTO for booking from a slot
+    public record BookFromSlotRequest(Long slotId, Long listingId) {}
+
+    @PostMapping("/from-slot")
+    public ResponseEntity<BookingResponseDto> createFromSlot(Authentication authentication, @RequestBody BookFromSlotRequest req) {
+        String learnerEmail = authentication.getName();
+        Booking booking = bookingService.createBookingFromSlot(learnerEmail, req.slotId(), req.listingId());
+        return ResponseEntity.ok(mapToBookingResponseDto(booking));
+    }
+
     @PostMapping
     public ResponseEntity<BookingResponseDto> createBookingRequest(@RequestBody CreateBookingRequest request, Authentication authentication) {
         String learnerEmail = authentication.getName();
@@ -39,8 +49,15 @@ public class BookingController {
 
     @PostMapping("/{id}/complete")
     public ResponseEntity<BookingResponseDto> completeBooking(@PathVariable Long id, Authentication authentication) {
-        String learnerEmail = authentication.getName();
-        Booking booking = bookingService.completeBooking(id, learnerEmail);
+        String userEmail = authentication.getName();
+        Booking booking = bookingService.completeBooking(id, userEmail);
+        return ResponseEntity.ok(mapToBookingResponseDto(booking));
+    }
+
+    @PostMapping("/{id}/dispute")
+    public ResponseEntity<BookingResponseDto> disputeBooking(@PathVariable Long id, Authentication authentication) {
+        String userEmail = authentication.getName();
+        Booking booking = bookingService.openDispute(id, userEmail);
         return ResponseEntity.ok(mapToBookingResponseDto(booking));
     }
 
@@ -62,8 +79,6 @@ public class BookingController {
         return ResponseEntity.ok(dtos);
     }
 
-
-    // Helper method to map the Entity to our clean DTO
     private BookingResponseDto mapToBookingResponseDto(Booking booking) {
         return new BookingResponseDto(
                 booking.getId(),
@@ -75,7 +90,8 @@ public class BookingController {
                 booking.getListing().getTeacher().getName(),
                 booking.getListing().getTokenPrice(),
                 booking.getStatus(),
-                booking.getBookingTime()
+                booking.getBookingTime(),
+                booking.getSessionRoomId()
         );
     }
 }

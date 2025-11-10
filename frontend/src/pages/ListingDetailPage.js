@@ -5,15 +5,26 @@ import { Clock, Tag, User, ArrowLeft } from 'lucide-react';
 import listingService from '../services/listingService';
 import { useAuth } from '../context/AuthContext';
 import BookingModal from '../components/BookingModal'; // Import the modal
+import ComposeMessageDialog from '../components/ComposeMessageDialog';
+import userService from '../services/userService'; 
 
 const ListingDetailPage = () => {
   const { id } = useParams(); // Gets the listing ID from the URL (e.g., /listing/1)
   const navigate = useNavigate();
   const { userProfile } = useAuth();
 
+  const [composeOpen, setComposeOpen] = useState(false);
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  const presetRecipient = listing ? {
+  id: listing.teacherId,
+  name: listing.teacherName,
+  avatarUrl: listing.teacherAvatarUrl
+} : null;
+
+  
 
   // State to control the modal
   const [modalOpen, setModalOpen] = useState(false);
@@ -119,24 +130,25 @@ const ListingDetailPage = () => {
           </Box>
 
           {/* Action Area */}
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pt: 3, borderTop: '2px solid #4a4a4a' }}>
-              <Box>
-                  <Typography sx={{ fontFamily: 'Inter', color: 'text.secondary' }}>
-                      Cost
-                  </Typography>
-                  <Typography variant="h5">
-                      {listing.tokenPrice.toFixed(2)} Tokens
-                  </Typography>
-              </Box>
-              <Button 
-                variant="contained" 
-                color="primary"
-                disabled={!userProfile || isOwnListing} // Disable if not logged in OR it's their own listing
-                onClick={handleOpenModal} // Open the modal on click
-                sx={{ py: 1.5, px: 4, fontSize: '1.3rem' }}
-              >
-                Book Session
-              </Button>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pt: 1, borderTop: '2px solid #4a4a4a' }}>
+                  <Typography sx={{ fontFamily: 'Inter', color: 'text.secondary' }}>Cost</Typography>
+                  <Typography variant="h5">{listing.tokenPrice.toFixed(2)} Tokens</Typography>
+                </Box>
+                <Box sx={{ display: 'flex', gap: 2 }}>
+                  {!isOwnListing && (
+                    <Button variant="outlined" onClick={() => setComposeOpen(true)}>
+                      Message
+                    </Button>
+                  )}
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    disabled={!userProfile || isOwnListing}
+                    onClick={handleOpenModal}
+                    sx={{ py: 1.5, px: 4, fontSize: '1.1rem' }}
+                  >
+                    Book Session
+                  </Button>
           </Box>
            {!userProfile && (
               <Typography sx={{ fontFamily: 'Inter', color: 'text.secondary', textAlign: 'right', mt: 1, fontSize: '0.9rem' }}>
@@ -152,6 +164,11 @@ const ListingDetailPage = () => {
       </Container>
       
       {/* The Modal Component itself */}
+      <ComposeMessageDialog
+        open={composeOpen}
+        onClose={() => setComposeOpen(false)}
+        presetRecipient={presetRecipient}
+      />
       <BookingModal 
         open={modalOpen}
         handleClose={handleCloseModal}
