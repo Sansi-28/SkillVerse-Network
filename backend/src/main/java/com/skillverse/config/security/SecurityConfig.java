@@ -45,8 +45,17 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         // Be more specific in production, e.g., your actual frontend URL
-        configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://skillverse-network-frontend.onrender.com"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedOrigins(List.of("http://localhost:3000", 
+                                                "https://skillverse-network-frontend.onrender.com", 
+                                                "https://skillverse.santosh-singh.me")
+                                            );
+        configuration.setAllowedMethods(Arrays.asList("GET",
+                                                    "POST",
+                                                    "PATCH",
+                                                    "PUT", 
+                                                    "DELETE", 
+                                                    "OPTIONS")
+                                                );
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
