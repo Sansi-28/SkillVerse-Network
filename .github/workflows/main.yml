@@ -26,27 +26,29 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          # 👇 IMPORTANT: Change 'frontend' if your folder is named differently
-          cache-dependency-path: './frontend/package-lock.json'
+          cache-dependency-path: 'frontend/package-lock.json'
 
       - name: Install dependencies
-        # 👇 IMPORTANT: Tells npm to run inside the subfolder
-        working-directory: ./frontend
+        working-directory: frontend
         run: npm ci
 
+      # This step manually creates the .env file to ensure React sees the variable
+      - name: Create .env file
+        working-directory: frontend
+        run: |
+          echo "REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }}" > .env
+          echo "GENERATE_SOURCEMAP=false" >> .env
+
       - name: Build
+        working-directory: frontend
         env:
-          # Maps the GitHub Secret to the VITE variable
-          VITE_API_URL: ${{ secrets.REACT_APP_API_URL }}
-        # 👇 IMPORTANT: Tells build to run inside the subfolder
-        working-directory: ./frontend
+          PUBLIC_URL: "."
         run: npm run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # 👇 IMPORTANT: Points to the build output inside the subfolder
-          path: ./frontend/build
+          path: frontend/build
 
   deploy:
     environment:
