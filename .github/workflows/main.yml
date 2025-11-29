@@ -46,7 +46,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           # 👇 IMPORTANT: Points to the build output inside the subfolder
-          path: ./frontend/dist
+          path: ./frontend/build
 
   deploy:
     environment:
