@@ -79,13 +79,6 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- H2 for dev/runtime testing -->
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
         <!-- PostgreSQL Driver for Production -->
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -98,6 +91,12 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
         </dependency>
 
         <!-- Test -->
