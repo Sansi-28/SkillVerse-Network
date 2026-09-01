@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [authToken, setAuthToken] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
 
-  // --- THE FIX IS HERE ---
+
   const fetchUserProfile = useCallback(async () => {
     try {
       // userService.getUserProfile() now returns the data object directly.
