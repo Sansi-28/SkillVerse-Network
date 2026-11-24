@@ -3,16 +3,13 @@ package com.skillverse.model.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "users")
-@Data
-@NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,9 +44,96 @@ public class User {
     @Column(name = "skill")
     private List<String> skillsWanted = new ArrayList<>();
 
+    public User() {}
+
     public User(String name, String email, String password) {
         this.name = name;
         this.email = email;
         this.password = password;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
+
+    public BigDecimal getTokenBalance() {
+        return tokenBalance;
+    }
+
+    public void setTokenBalance(BigDecimal tokenBalance) {
+        this.tokenBalance = tokenBalance;
+    }
+
+    public List<String> getSkillsOffered() {
+        return skillsOffered;
+    }
+
+    public void setSkillsOffered(List<String> skillsOffered) {
+        this.skillsOffered = skillsOffered != null ? skillsOffered : new ArrayList<>();
+    }
+
+    public List<String> getSkillsWanted() {
+        return skillsWanted;
+    }
+
+    public void setSkillsWanted(List<String> skillsWanted) {
+        this.skillsWanted = skillsWanted != null ? skillsWanted : new ArrayList<>();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

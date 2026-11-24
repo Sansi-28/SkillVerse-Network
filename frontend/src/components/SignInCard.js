@@ -1,10 +1,18 @@
 import React, { useState } from 'react';
-import { Card, CardContent, Typography, Box, TextField, Button, CircularProgress } from '@mui/material';
-import { User, KeyRound } from 'lucide-react';
+import {
+  Typography,
+  Box,
+  TextField,
+  Button,
+  CircularProgress,
+  Paper,
+  Container,
+} from '@mui/material';
+import { Sparkles, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-const SignInCard = ({ onToggle }) => { // <-- Add onToggle prop
+const SignInCard = ({ onToggle }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -21,49 +29,107 @@ const SignInCard = ({ onToggle }) => { // <-- Add onToggle prop
       await login(email, password);
       navigate('/');
     } catch (err) {
-      setError('Failed to sign in. Please check your credentials.');
+      setError('Failed to sign in. Please verify your email and password.');
       console.error(err);
     }
     setLoading(false);
   };
 
   return (
-    <Box sx={{ display: 'grid', placeItems: 'center', py: 8 }}>
-      <Box
+    <Box
+      sx={{
+        minHeight: 'calc(100vh - 160px)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        py: { xs: 6, md: 8 },
+        px: 2,
+        background: 'linear-gradient(180deg, rgba(238, 245, 241, 0.4) 0%, #fbfbfa 100%)',
+      }}
+    >
+      <Paper
         component="form"
         onSubmit={handleSignIn}
         sx={{
-          width: { xs: '90vw', sm: 420 },
+          width: '100%',
+          maxWidth: 440,
           backgroundColor: '#ffffff',
-          borderRadius: '28px',
-          p: 5,
-          boxShadow: '0 16px 64px rgba(0,0,0,0.07)',
-          border: '1px solid rgba(0,0,0,0.04)',
+          borderRadius: '24px',
+          p: { xs: 3.5, sm: 5 },
+          boxShadow: '0 20px 48px -12px rgba(13, 30, 22, 0.1)',
+          border: '1px solid rgba(13, 30, 22, 0.08)',
         }}
       >
-        {/* Logo mark */}
+        {/* Brand mark */}
         <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
-          <Box sx={{ width: 48, height: 48, borderRadius: '14px', backgroundColor: '#163a24', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <User size={24} color="#ffffff" />
+          <Box
+            sx={{
+              width: 50,
+              height: 50,
+              borderRadius: '14px',
+              background: 'linear-gradient(135deg, #0f3822 0%, #175a37 100%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 8px 20px rgba(15, 56, 34, 0.25)',
+            }}
+          >
+            <Sparkles size={24} color="#ffffff" />
           </Box>
         </Box>
 
-        <Typography variant="h5" sx={{ textAlign: 'center', fontFamily: '"Outfit", sans-serif', fontWeight: 700, color: '#1a3626', mb: 0.5 }}>
-          Welcome back
+        <Typography
+          variant="h4"
+          sx={{
+            textAlign: 'center',
+            fontFamily: '"Outfit", sans-serif',
+            fontWeight: 800,
+            fontSize: '1.8rem',
+            color: '#0d1e16',
+            letterSpacing: '-0.02em',
+            mb: 0.5,
+          }}
+        >
+          Welcome Back
         </Typography>
-        <Typography sx={{ textAlign: 'center', fontFamily: 'Inter', color: '#6b7280', fontSize: '0.9rem', mb: 4 }}>
-          Sign in to your SkillVerse account
+
+        <Typography
+          sx={{
+            textAlign: 'center',
+            color: 'text.secondary',
+            fontSize: '0.9rem',
+            mb: 4,
+          }}
+        >
+          Sign in to access your skills, sessions, and token wallet
         </Typography>
+
+        {error && (
+          <Box
+            sx={{
+              mb: 3,
+              p: 1.5,
+              borderRadius: '12px',
+              bgcolor: '#fee2e2',
+              color: '#b91c1c',
+              fontSize: '0.85rem',
+              fontWeight: 600,
+              textAlign: 'center',
+            }}
+          >
+            {error}
+          </Box>
+        )}
 
         <TextField
           fullWidth
           variant="outlined"
-          label="Email"
+          label="Email Address"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          sx={{ mb: 2 }}
+          sx={{ mb: 2.5 }}
         />
 
         <TextField
@@ -77,32 +143,43 @@ const SignInCard = ({ onToggle }) => { // <-- Add onToggle prop
           sx={{ mb: 3 }}
         />
 
-        {error && (
-          <Typography color="error" sx={{ textAlign: 'center', mb: 2, fontFamily: 'Inter', fontSize: '0.85rem' }}>
-            {error}
-          </Typography>
-        )}
-
         <Button
           type="submit"
           variant="contained"
           color="primary"
           fullWidth
           disabled={loading}
-          sx={{ py: 1.5, fontSize: '1rem', fontWeight: 600 }}
+          size="large"
+          sx={{
+            py: 1.4,
+            fontSize: '1rem',
+            fontWeight: 700,
+            borderRadius: '50px',
+            boxShadow: '0 4px 14px rgba(15, 56, 34, 0.2)',
+          }}
         >
           {loading ? <CircularProgress size={24} color="inherit" /> : 'Sign In'}
         </Button>
 
-        <Button
-          onClick={onToggle}
-          fullWidth
-          sx={{ mt: 2, color: '#4b5563', fontSize: '0.85rem' }}
-        >
-          Don't have an account?{' '}
-          <Box component="span" sx={{ color: '#163a24', fontWeight: 700, ml: 0.5 }}>Sign Up</Box>
-        </Button>
-      </Box>
+        <Box sx={{ textAlign: 'center', mt: 3 }}>
+          <Typography sx={{ color: 'text.secondary', fontSize: '0.875rem' }}>
+            Don't have an account?{' '}
+            <Button
+              onClick={onToggle}
+              sx={{
+                color: 'primary.main',
+                fontWeight: 700,
+                fontSize: '0.875rem',
+                p: 0,
+                minWidth: 'auto',
+                '&:hover': { backgroundColor: 'transparent', textDecoration: 'underline' },
+              }}
+            >
+              Sign Up Free
+            </Button>
+          </Typography>
+        </Box>
+      </Paper>
     </Box>
   );
 };

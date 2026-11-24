@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.util.DoubleSummaryStatistics;
 
 @Service
+@Transactional
 public class ListingService {
 
     @Autowired

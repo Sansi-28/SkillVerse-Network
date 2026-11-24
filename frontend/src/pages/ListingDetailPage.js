@@ -1,15 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Container, Typography, Box, Button, CircularProgress, Avatar, Paper } from '@mui/material';
-import { Clock, Tag, User, ArrowLeft } from 'lucide-react';
+import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
+import {
+  Container,
+  Typography,
+  Box,
+  Button,
+  CircularProgress,
+  Avatar,
+  Paper,
+  Grid,
+  Stack,
+} from '@mui/material';
+import {
+  ArrowLeft,
+  MessageSquare,
+  ShieldCheck,
+  Clock,
+} from 'lucide-react';
 import listingService from '../services/listingService';
 import { useAuth } from '../context/AuthContext';
-import BookingModal from '../components/BookingModal'; // Import the modal
+import BookingModal from '../components/BookingModal';
 import ComposeMessageDialog from '../components/ComposeMessageDialog';
-import userService from '../services/userService'; 
+import nftCoin from '../resources/nft.png';
 
 const ListingDetailPage = () => {
-  const { id } = useParams(); // Gets the listing ID from the URL (e.g., /listing/1)
+  const { id } = useParams();
   const navigate = useNavigate();
   const { userProfile } = useAuth();
 
@@ -17,16 +32,6 @@ const ListingDetailPage = () => {
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-
-  const presetRecipient = listing ? {
-  id: listing.teacherId,
-  name: listing.teacherName,
-  avatarUrl: listing.teacherAvatarUrl
-} : null;
-
-  
-
-  // State to control the modal
   const [modalOpen, setModalOpen] = useState(false);
 
   const handleOpenModal = () => setModalOpen(true);
@@ -47,134 +52,284 @@ const ListingDetailPage = () => {
     };
 
     fetchListing();
-  }, [id]); // Re-run this effect if the ID in the URL changes
+  }, [id]);
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
-        <CircularProgress />
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+        <CircularProgress size={36} thickness={4} />
       </Box>
     );
   }
 
-  if (error) {
+  if (error || !listing) {
     return (
-      <Typography color="error" align="center" sx={{ mt: 4 }}>
-        {error}
-      </Typography>
+      <Container maxWidth="md" sx={{ py: 8, textAlign: 'center' }}>
+        <Typography variant="h6" color="error" sx={{ mb: 2 }}>
+          {error || 'Listing not found.'}
+        </Typography>
+        <Button component={RouterLink} to="/discover" startIcon={<ArrowLeft size={16} />}>
+          Back to Sessions
+        </Button>
+      </Container>
     );
   }
 
-  if (!listing) {
-      // This state can happen if loading is false but listing is still null
-      return (
-        <Typography align="center" sx={{ mt: 4 }}>
-            Listing not found.
-        </Typography>
-      );
-  }
-
   const isOwnListing = userProfile && listing && userProfile.id === listing.teacherId;
+  const presetRecipient = {
+    id: listing.teacherId,
+    name: listing.teacherName,
+    avatarUrl: listing.teacherAvatarUrl,
+  };
+
+  const photo = listing.photoUrl || '/photos/m138547195-1200.webp';
+  const guild = listing.guild || 'Craft';
 
   return (
-    <>
-      <Container sx={{ py: 5, maxWidth: '800px !important' }}>
-        <Button 
-          startIcon={<ArrowLeft />} 
+    <Box sx={{ backgroundColor: '#fbfaf7', minHeight: '100vh', pb: 12 }}>
+      {/* Back button */}
+      <Container maxWidth="lg" sx={{ pt: 4, pb: 2 }}>
+        <Button
+          startIcon={<ArrowLeft size={16} />}
           onClick={() => navigate('/discover')}
-          sx={{ mb: 3 }}
-        >
-          Back to Discover
-        </Button>
-
-        <Paper 
-          elevation={0}
-          sx={{ 
-              border: '2px solid #4a4a4a',
-              borderRadius: '4px',
-              p: 4
+          sx={{
+            color: '#55655c',
+            fontWeight: 600,
+            fontSize: '0.85rem',
+            textTransform: 'none',
+            '&:hover': { color: '#0a331c', backgroundColor: 'transparent' },
           }}
         >
-          {/* Header Section */}
-          <Box sx={{ borderBottom: '2px solid #4a4a4a', pb: 3, mb: 3 }}>
-              <Typography variant="h3" component="h1" gutterBottom>
-                  {listing.title}
-              </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <Avatar sx={{ width: 40, height: 40, mr: 2, border: '2px solid #4a4a4a' }} />
-                  <Typography sx={{ fontFamily: 'Inter', fontSize: '1.2rem' }}>
-                      Offered by <strong>{listing.teacherName}</strong>
-                  </Typography>
-              </Box>
-          </Box>
-
-          {/* Description */}
-          <Typography variant="body1" sx={{ mb: 4, fontSize: '1.1rem' }}>
-            {listing.description || 'No description provided.'}
-          </Typography>
-
-          {/* Details Section */}
-          <Box sx={{ display: 'flex', gap: 4, mb: 4, fontFamily: 'Inter' }}>
-              {listing.durationMinutes && (
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Clock size={20} style={{ marginRight: '8px' }}/>
-                      <Typography>{listing.durationMinutes} minutes</Typography>
-                  </Box>
-              )}
-              {listing.format && (
-                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <User size={20} style={{ marginRight: '8px' }}/>
-                      <Typography>{listing.format}</Typography>
-                  </Box>
-              )}
-          </Box>
-
-          {/* Action Area */}
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pt: 1, borderTop: '2px solid #4a4a4a' }}>
-                  <Typography sx={{ fontFamily: 'Inter', color: 'text.secondary' }}>Cost</Typography>
-                  <Typography variant="h5">{listing.tokenPrice.toFixed(2)} Tokens</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', gap: 2 }}>
-                  {!isOwnListing && (
-                    <Button variant="outlined" onClick={() => setComposeOpen(true)}>
-                      Message
-                    </Button>
-                  )}
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    disabled={!userProfile || isOwnListing}
-                    onClick={handleOpenModal}
-                    sx={{ py: 1.5, px: 4, fontSize: '1.1rem' }}
-                  >
-                    Book Session
-                  </Button>
-          </Box>
-           {!userProfile && (
-              <Typography sx={{ fontFamily: 'Inter', color: 'text.secondary', textAlign: 'right', mt: 1, fontSize: '0.9rem' }}>
-                  Please sign in to book a session.
-              </Typography>
-          )}
-           {isOwnListing && (
-            <Typography sx={{ fontFamily: 'Inter', color: 'text.secondary', textAlign: 'right', mt: 1, fontSize: '0.9rem' }}>
-                This is your own listing.
-            </Typography>
-        )}
-        </Paper>
+          Back to Sessions
+        </Button>
       </Container>
-      
-      {/* The Modal Component itself */}
+
+      <Container maxWidth="lg">
+        <Grid container spacing={{ xs: 4, md: 6 }}>
+          {/* Left Column: Image & Details */}
+          <Grid item xs={12} md={7.5}>
+            {/* Main Visual */}
+            <Box
+              sx={{
+                borderRadius: '20px',
+                overflow: 'hidden',
+                aspectRatio: '16 / 10',
+                backgroundColor: '#f1efe9',
+                border: '1px solid rgba(10, 51, 28, 0.08)',
+                mb: 4,
+              }}
+            >
+              <Box
+                component="img"
+                src={photo}
+                alt={listing.title}
+                sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+            </Box>
+
+            <Typography
+              sx={{
+                fontFamily: '"Space Mono", monospace',
+                fontSize: '0.75rem',
+                color: '#84968b',
+                textTransform: 'uppercase',
+                letterSpacing: '0.06em',
+                mb: 1,
+              }}
+            >
+              {guild}
+            </Typography>
+
+            <Typography
+              variant="h2"
+              sx={{
+                fontFamily: '"Playfair Display", Georgia, serif',
+                fontWeight: 700,
+                fontSize: { xs: '2rem', sm: '2.6rem' },
+                color: '#0a331c',
+                lineHeight: 1.2,
+                mb: 3,
+              }}
+            >
+              {listing.title}
+            </Typography>
+
+            {/* Mentor Bar */}
+            <Box
+              component={RouterLink}
+              to={`/profile/${listing.teacherId}`}
+              sx={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 1.5,
+                textDecoration: 'none',
+                color: 'inherit',
+                p: 1.2,
+                pr: 2.5,
+                borderRadius: '50px',
+                backgroundColor: '#ffffff',
+                border: '1px solid rgba(10, 51, 28, 0.08)',
+                mb: 4,
+                '&:hover': { borderColor: '#0a331c' },
+              }}
+            >
+              <Avatar
+                src={listing.teacherAvatarUrl}
+                alt={listing.teacherName}
+                sx={{ width: 36, height: 36, bgcolor: 'primary.main', fontSize: '0.85rem' }}
+              >
+                {listing.teacherName?.charAt(0) || 'M'}
+              </Avatar>
+              <Box>
+                <Typography sx={{ fontSize: '0.875rem', fontWeight: 600, color: '#0a331c', lineHeight: 1.2 }}>
+                  {listing.teacherName}
+                </Typography>
+                <Typography sx={{ fontSize: '0.75rem', color: '#798a81' }}>
+                  Mentor
+                </Typography>
+              </Box>
+            </Box>
+
+            {/* Description */}
+            <Typography
+              sx={{
+                fontSize: '1.05rem',
+                color: '#3d4d44',
+                lineHeight: 1.7,
+                mb: 4,
+                maxWidth: 620,
+              }}
+            >
+              {listing.description}
+            </Typography>
+          </Grid>
+
+          {/* Right Column: Sticky Booking Ticket */}
+          <Grid item xs={12} md={4.5}>
+            <Box sx={{ position: 'sticky', top: 96 }}>
+              <Paper
+                elevation={0}
+                sx={{
+                  p: { xs: 3.5, sm: 4 },
+                  borderRadius: '20px',
+                  backgroundColor: '#ffffff',
+                  border: '1px solid rgba(10, 51, 28, 0.1)',
+                }}
+              >
+                {/* Price */}
+                <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1, mb: 1 }}>
+                  <Typography
+                    sx={{
+                      fontFamily: '"Space Mono", monospace',
+                      fontSize: '2.2rem',
+                      fontWeight: 800,
+                      color: '#0a331c',
+                      lineHeight: 1,
+                    }}
+                  >
+                    {Number(listing.tokenPrice || 0).toFixed(0)}
+                  </Typography>
+                  <Typography sx={{ fontFamily: '"Space Mono", monospace', fontSize: '0.9rem', color: '#68776f' }}>
+                    TOKENS
+                  </Typography>
+                </Box>
+                <Typography sx={{ fontSize: '0.8rem', color: '#798a81', mb: 3 }}>
+                  Internal token currency · Zero cash required
+                </Typography>
+
+                {/* Session specs */}
+                <Stack spacing={1.5} sx={{ mb: 3, pt: 2, borderTop: '1px solid rgba(10, 51, 28, 0.08)' }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Typography sx={{ fontSize: '0.85rem', color: '#68776f' }}>Duration</Typography>
+                    <Typography sx={{ fontSize: '0.85rem', fontWeight: 600, color: '#0a331c' }}>
+                      {listing.durationMinutes ? `${listing.durationMinutes} minutes` : '60 minutes'}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Typography sx={{ fontSize: '0.85rem', color: '#68776f' }}>Format</Typography>
+                    <Typography sx={{ fontSize: '0.85rem', fontWeight: 600, color: '#0a331c' }}>
+                      {listing.format || '1:1 Session'}
+                    </Typography>
+                  </Box>
+                </Stack>
+
+                {/* Primary CTA */}
+                {isOwnListing ? (
+                  <Button
+                    fullWidth
+                    disabled
+                    variant="outlined"
+                    sx={{ borderRadius: '50px', py: 1.2, mb: 1.5 }}
+                  >
+                    Your Listing
+                  </Button>
+                ) : (
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    onClick={handleOpenModal}
+                    sx={{
+                      backgroundColor: '#0a331c',
+                      color: '#ffffff',
+                      borderRadius: '50px',
+                      py: 1.2,
+                      fontSize: '0.9rem',
+                      fontWeight: 600,
+                      textTransform: 'none',
+                      boxShadow: 'none',
+                      mb: 1.5,
+                      '&:hover': { backgroundColor: '#144627', boxShadow: 'none' },
+                    }}
+                  >
+                    Request Session
+                  </Button>
+                )}
+
+                {/* Message Mentor */}
+                {!isOwnListing && (
+                  <Button
+                    fullWidth
+                    variant="outlined"
+                    onClick={() => setComposeOpen(true)}
+                    startIcon={<MessageSquare size={16} />}
+                    sx={{
+                      borderRadius: '50px',
+                      py: 1,
+                      fontSize: '0.85rem',
+                      fontWeight: 600,
+                      borderColor: 'rgba(10, 51, 28, 0.2)',
+                      color: '#0a331c',
+                      textTransform: 'none',
+                      mb: 3,
+                      '&:hover': { borderColor: '#0a331c', backgroundColor: 'transparent' },
+                    }}
+                  >
+                    Message Mentor
+                  </Button>
+                )}
+
+                {/* Subtle Escrow Notice */}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <ShieldCheck size={16} color="#0a331c" />
+                  <Typography sx={{ fontSize: '0.75rem', color: '#68776f' }}>
+                    Tokens held in escrow until session delivery.
+                  </Typography>
+                </Box>
+              </Paper>
+            </Box>
+          </Grid>
+        </Grid>
+      </Container>
+
+      {/* Booking and Messaging Modals */}
+      <BookingModal open={modalOpen} handleClose={handleCloseModal} listing={listing} />
       <ComposeMessageDialog
         open={composeOpen}
-        onClose={() => setComposeOpen(false)}
+        handleClose={() => setComposeOpen(false)}
         presetRecipient={presetRecipient}
+        presetListing={listing}
       />
-      <BookingModal 
-        open={modalOpen}
-        handleClose={handleCloseModal}
-        listing={listing}
-      />
-    </>
+    </Box>
   );
 };
 

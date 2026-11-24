@@ -1,90 +1,206 @@
 import { createTheme, alpha } from '@mui/material/styles';
 
-const ANIMATION_TIMING = '0.3s cubic-bezier(0.2, 0.8, 0.2, 1)';
+const primaryColor = '#0a331c';
+const primaryDark = '#051f10';
+const primaryLight = '#eaf5ee';
+const accentLime = '#cbf348';
+const accentTerracotta = '#e25b39';
+const accentGold = '#f59e0b';
 
-const primaryGreen = '#163a24';
-const darkGreenText = '#1a3626';
-const softBeigeBg = '#faf9f5';
-const cardBeige = '#ffffff'; // Keep cards white for contrast against beige background
-const lightGreenAccent = '#f1f4ec';
+const inkPrimary = '#111814';
+const inkSecondary = '#4a5951';
+const inkMuted = '#798a81';
+
+const bgDefault = '#f6f4ee';
+const bgPaper = '#ffffff';
+
+const hairline = 'rgba(17, 24, 20, 0.09)';
+const hairlineStrong = 'rgba(17, 24, 20, 0.18)';
 
 export const theme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: primaryGreen,
+      main: primaryColor,
+      dark: primaryDark,
+      light: primaryLight,
       contrastText: '#ffffff',
     },
     secondary: {
-      main: '#4a4a4a', // Keeping this for neutral secondary buttons
+      main: '#2d3748',
+      light: '#f7fafc',
+      dark: '#1a202c',
+      contrastText: '#ffffff',
     },
     background: {
-      default: softBeigeBg,
-      paper: cardBeige,
+      default: bgDefault,
+      paper: bgPaper,
     },
     text: {
-      primary: darkGreenText,
-      secondary: '#4b5563', // Warm gray
+      primary: inkPrimary,
+      secondary: inkSecondary,
+      disabled: inkMuted,
     },
     success: {
-      main: '#2e7d32',
+      main: '#10b981',
+      light: '#d1fae5',
+      dark: '#047857',
     },
+    warning: {
+      main: accentGold,
+      light: '#fef3c7',
+      dark: '#b45309',
+    },
+    error: {
+      main: accentTerracotta,
+      light: '#fee2e2',
+      dark: '#b91c1c',
+    },
+    info: {
+      main: '#0284c7',
+      light: '#e0f2fe',
+      dark: '#0369a1',
+    },
+    divider: hairline,
     custom: {
-      accentLight: lightGreenAccent,
-      cardBeige: cardBeige,
-    }
+      lime: accentLime,
+      terracotta: accentTerracotta,
+      gold: accentGold,
+      goldLight: '#fef3c7',
+      hairline: hairline,
+      hairlineStrong: hairlineStrong,
+      atelierDark: '#0d120f',
+    },
   },
   typography: {
-    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
-    h1: { fontFamily: '"Outfit", sans-serif', fontWeight: 600, color: darkGreenText },
-    h2: { fontFamily: '"Outfit", sans-serif', fontWeight: 600, color: darkGreenText },
-    h3: { fontFamily: '"Outfit", sans-serif', fontWeight: 600, color: darkGreenText },
-    h4: { fontFamily: '"Outfit", sans-serif', fontWeight: 600, color: darkGreenText },
-    h5: { fontFamily: '"Outfit", sans-serif', fontWeight: 600, color: darkGreenText },
-    h6: { fontFamily: '"Outfit", sans-serif', fontWeight: 600, color: darkGreenText },
+    fontFamily: '"Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    h1: {
+      fontFamily: '"Playfair Display", Georgia, serif',
+      fontWeight: 700,
+      color: inkPrimary,
+      letterSpacing: '-0.025em',
+      lineHeight: 1.05,
+    },
+    h2: {
+      fontFamily: '"Syne", "Outfit", sans-serif',
+      fontWeight: 800,
+      color: inkPrimary,
+      letterSpacing: '-0.03em',
+      lineHeight: 1.1,
+    },
+    h3: {
+      fontFamily: '"Syne", "Outfit", sans-serif',
+      fontWeight: 750,
+      color: inkPrimary,
+      letterSpacing: '-0.025em',
+      lineHeight: 1.15,
+    },
+    h4: {
+      fontFamily: '"Syne", "Outfit", sans-serif',
+      fontWeight: 700,
+      color: inkPrimary,
+      letterSpacing: '-0.02em',
+      lineHeight: 1.25,
+    },
+    h5: {
+      fontFamily: '"Syne", "Outfit", sans-serif',
+      fontWeight: 700,
+      color: inkPrimary,
+      letterSpacing: '-0.015em',
+      lineHeight: 1.3,
+    },
+    h6: {
+      fontFamily: '"Syne", "Outfit", sans-serif',
+      fontWeight: 700,
+      color: inkPrimary,
+      lineHeight: 1.35,
+    },
+    subtitle1: {
+      fontFamily: '"Plus Jakarta Sans", sans-serif',
+      fontWeight: 600,
+      lineHeight: 1.5,
+      color: inkSecondary,
+    },
+    subtitle2: {
+      fontFamily: '"Space Mono", monospace',
+      fontWeight: 700,
+      lineHeight: 1.5,
+      letterSpacing: '0.04em',
+      textTransform: 'uppercase',
+      fontSize: '0.8rem',
+      color: inkSecondary,
+    },
+    body1: {
+      fontFamily: '"Plus Jakarta Sans", sans-serif',
+      fontSize: '1rem',
+      lineHeight: 1.65,
+      color: inkPrimary,
+    },
+    body2: {
+      fontFamily: '"Plus Jakarta Sans", sans-serif',
+      fontSize: '0.875rem',
+      lineHeight: 1.6,
+      color: inkSecondary,
+    },
     button: {
       textTransform: 'none',
-      fontWeight: 500,
-      fontFamily: '"Outfit", sans-serif',
+      fontWeight: 700,
+      fontFamily: '"Syne", "Plus Jakarta Sans", sans-serif',
+      letterSpacing: '0.01em',
+    },
+    caption: {
+      fontFamily: '"Space Mono", monospace',
+      fontSize: '0.75rem',
+      color: inkMuted,
+      letterSpacing: '0.03em',
     },
   },
   shape: {
-    borderRadius: 16,
+    borderRadius: 18,
   },
   components: {
     MuiCssBaseline: {
       styleOverrides: {
-        '::selection': {
-          backgroundColor: alpha(primaryGreen, 0.2),
+        body: {
+          backgroundColor: bgDefault,
+          color: inkPrimary,
         },
       },
     },
     MuiButton: {
+      defaultProps: {
+        disableElevation: true,
+      },
       styleOverrides: {
         root: {
-          borderRadius: 50, // Pill shaped buttons
+          borderRadius: 50,
           padding: '10px 24px',
-          boxShadow: 'none',
-          transition: `all ${ANIMATION_TIMING}`,
+          fontSize: '0.925rem',
+          transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
           '&:hover': {
-            boxShadow: '0 4px 12px rgba(22, 58, 36, 0.15)',
-            transform: 'translateY(-1px)',
+            transform: 'translateY(-2px)',
+          },
+          '&:active': {
+            transform: 'translateY(0)',
           },
         },
         containedPrimary: {
-          backgroundColor: primaryGreen,
+          backgroundColor: primaryColor,
+          color: '#ffffff',
+          boxShadow: '0 4px 14px rgba(10, 51, 28, 0.22)',
           '&:hover': {
-            backgroundColor: '#0f291e', // Darker green
+            backgroundColor: primaryDark,
+            boxShadow: '0 8px 22px rgba(10, 51, 28, 0.32)',
           },
         },
-        outlinedSecondary: {
-          borderColor: primaryGreen,
-          color: primaryGreen,
-          borderWidth: '2px',
+        outlinedPrimary: {
+          borderColor: hairlineStrong,
+          color: primaryColor,
+          borderWidth: '1.5px',
           '&:hover': {
-            borderWidth: '2px',
-            backgroundColor: 'rgba(22, 58, 36, 0.04)',
-            borderColor: '#0f291e',
+            borderWidth: '1.5px',
+            borderColor: primaryColor,
+            backgroundColor: primaryLight,
           },
         },
       },
@@ -92,73 +208,86 @@ export const theme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: 24, // Extra soft rounded cards
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.04)', // Very soft shadow
-          border: '1px solid rgba(0, 0, 0, 0.02)',
-          transition: `all ${ANIMATION_TIMING}`,
+          borderRadius: 22,
+          backgroundColor: bgPaper,
+          border: `1px solid ${hairline}`,
+          boxShadow: '0 4px 16px -4px rgba(17, 24, 20, 0.05)',
+          transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
           '&:hover': {
-            boxShadow: '0 12px 48px rgba(0, 0, 0, 0.06)',
-            transform: 'translateY(-2px)',
-          }
+            boxShadow: '0 20px 48px -12px rgba(17, 24, 20, 0.12)',
+            borderColor: 'rgba(10, 51, 28, 0.2)',
+            transform: 'translateY(-3px)',
+          },
+        },
+      },
+    },
+    MuiPaper: {
+      defaultProps: {
+        elevation: 0,
+      },
+      styleOverrides: {
+        root: {
+          backgroundImage: 'none',
+          backgroundColor: bgPaper,
+          borderRadius: 22,
         },
       },
     },
     MuiAppBar: {
       styleOverrides: {
         root: {
-          backgroundColor: softBeigeBg,
-          color: darkGreenText,
+          backgroundColor: alpha(bgDefault, 0.88),
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          color: inkPrimary,
           boxShadow: 'none',
-          borderBottom: 'none', // Remove harsh borders
+          borderBottom: `1px solid ${hairline}`,
         },
-      },
-    },
-    MuiTextField: {
-      defaultProps: {
-        variant: 'outlined',
       },
     },
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
-          borderRadius: 50, // Pill shaped inputs for search
-          backgroundColor: '#ffffff',
-          transition: `all ${ANIMATION_TIMING}`,
+          borderRadius: 14,
+          backgroundColor: bgPaper,
+          transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
           '& .MuiOutlinedInput-notchedOutline': {
-            borderColor: '#e5e7eb', // Soft border
+            borderColor: hairlineStrong,
+            borderWidth: '1px',
           },
           '&:hover .MuiOutlinedInput-notchedOutline': {
-            borderColor: '#d1d5db',
+            borderColor: 'rgba(17, 24, 20, 0.35)',
           },
           '&.Mui-focused': {
-            backgroundColor: '#ffffff',
-            boxShadow: '0 0 0 4px rgba(22, 58, 36, 0.1)',
+            boxShadow: `0 0 0 3px ${alpha(primaryColor, 0.12)}`,
             '& .MuiOutlinedInput-notchedOutline': {
-              borderColor: primaryGreen,
-              borderWidth: '1px',
+              borderColor: primaryColor,
+              borderWidth: '1.5px',
             },
           },
         },
       },
     },
-    MuiPaper: {
+    MuiChip: {
       styleOverrides: {
         root: {
-          backgroundImage: 'none',
-          backgroundColor: cardBeige,
-          boxShadow: '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+          borderRadius: 50,
+          fontWeight: 700,
+          fontSize: '0.8rem',
+          height: '28px',
+          border: `1px solid ${hairline}`,
         },
-        elevation1: {
-          boxShadow: '0 4px 24px -4px rgba(0, 0, 0, 0.04)',
-        }
       },
     },
-    MuiAvatar: {
+    MuiDialog: {
       styleOverrides: {
-        root: {
-          border: `2px solid ${softBeigeBg}`,
-        }
-      }
-    }
+        paper: {
+          borderRadius: 26,
+          padding: '8px',
+          boxShadow: '0 32px 72px -16px rgba(17, 24, 20, 0.22)',
+          border: `1px solid ${hairline}`,
+        },
+      },
+    },
   },
 });

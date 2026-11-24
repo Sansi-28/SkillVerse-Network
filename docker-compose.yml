@@ -1,22 +1,50 @@
 version: '3.8'
 
 services:
+  db:
+    image: postgres:15-alpine
+    container_name: skillverse-db
+    environment:
+      POSTGRES_DB: skillverse
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d skillverse"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   backend:
     build:
       context: ./backend
+    container_name: skillverse-backend
     ports:
       - "8080:8080"
     environment:
-      # You can add database variables here later if you switch from H2
+      - PORT=8080
+      - DB_URL=jdbc:postgresql://db:5432/skillverse
+      - DB_USER=postgres
+      - DB_PASSWORD=password
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - JWT_SECRET=VGhpc0lzTXlTdXBlckxvbmdBbmRWZXJ5U2VjdXJlU2VjcmV0S2V5Rm9yTXlTa2lsbEV4Y2hhbmdlQXBwbGljYXRpb24xMjM0NTY3ODkw
+    depends_on:
+      db:
+        condition: service_healthy
 
   frontend:
     build:
       context: ./frontend
       args:
-        # For local testing, the backend is available at http://backend:8080
-        REACT_APP_API_URL: http://localhost:8080 || https://skillverse-network-backend.onrender.com
+        REACT_APP_API_URL: http://localhost:8080
+    container_name: skillverse-frontend
     ports:
       - "3000:80"
     depends_on:
       - backend
+
+volumes:
+  postgres_data:

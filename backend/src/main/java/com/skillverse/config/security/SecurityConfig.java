@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,10 +15,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import java.util.Arrays;
 import java.util.List;
@@ -44,19 +47,15 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // Be more specific in production, e.g., your actual frontend URL
-        configuration.setAllowedOrigins(List.of("http://localhost:3000", 
-                                                "https://skillverse-network-frontend.onrender.com", 
-                                                "https://skillverse.santosh-singh.me")
-                                            );
-        configuration.setAllowedMethods(Arrays.asList("GET",
-                                                    "POST",
-                                                    "PATCH",
-                                                    "PUT", 
-                                                    "DELETE", 
-                                                    "OPTIONS")
-                                                );
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        configuration.setAllowedOriginPatterns(List.of(
+                "http://localhost:[*]",
+                "http://127.0.0.1:[*]",
+                "https://*.onrender.com",
+                "https://*.santosh-singh.me",
+                "*"
+        ));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "X-Requested-With", "Origin"));
         configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
@@ -67,51 +66,51 @@ public class SecurityConfig {
     @Order(1)
     public SecurityFilterChain h2ConsoleSecurityFilterChain(HttpSecurity http) throws Exception {
         http
-                .securityMatcher(new AntPathRequestMatcher("/h2-console/**"))
+                .securityMatcher(AntPathRequestMatcher.antMatcher("/h2-console/**"))
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-                .csrf(csrf -> csrf.ignoringRequestMatchers(new AntPathRequestMatcher("/h2-console/**")))
+                .csrf(csrf -> csrf.ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")))
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
         return http.build();
     }
 
     @Bean
     @Order(2)
-    public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
+        MvcRequestMatcher.Builder mvc = new MvcRequestMatcher.Builder(introspector);
+
         http
                 .cors(withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
-                        // --- Group 1: Publicly Accessible Endpoints ---
+                        // Public Endpoints
                         .requestMatchers(
-                                new AntPathRequestMatcher("/api/auth/**"),
-                                new AntPathRequestMatcher("/api/search", "GET"),
-                                new AntPathRequestMatcher("/api/listings", "GET"),
-                                new AntPathRequestMatcher("/api/listings/**", "GET"),
-                                new AntPathRequestMatcher("/api/users/**", "GET"),
-                                new AntPathRequestMatcher("/api/files/**", "GET"),
-
-                                // --- THE FIX: Allow WebSocket handshake connections ---
-                                new AntPathRequestMatcher("/ws/**")
-
+                                mvc.pattern("/api/auth/**"),
+                                mvc.pattern("/actuator/**"),
+                                mvc.pattern("/ws/**")
+                        ).permitAll()
+                        .requestMatchers(
+                                mvc.pattern(HttpMethod.GET, "/api/listings"),
+                                mvc.pattern(HttpMethod.GET, "/api/listings/**"),
+                                mvc.pattern(HttpMethod.GET, "/api/search"),
+                                mvc.pattern(HttpMethod.GET, "/api/users/**"),
+                                mvc.pattern(HttpMethod.GET, "/api/files/**")
                         ).permitAll()
 
-                        // --- Group 2: Authenticated User Endpoints ---
+                        // Authenticated Endpoints
+                        .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/listings")).authenticated()
+                        .requestMatchers(mvc.pattern(HttpMethod.PATCH, "/api/users/me")).authenticated()
                         .requestMatchers(
-                                new AntPathRequestMatcher("/api/listings", "POST"),
-                                new AntPathRequestMatcher("/api/users/me", "PATCH"),
-                                new AntPathRequestMatcher("/api/bookings/**"),
-                                new AntPathRequestMatcher("/api/reports/**"),
-                                new AntPathRequestMatcher("/api/files/**", "GET"),
-                                new AntPathRequestMatcher("/api/files/**", "POST"),
-                                new AntPathRequestMatcher("/api/messages/**"),
-                                new AntPathRequestMatcher("/api/notifications/**"),
-                                new AntPathRequestMatcher("/api/availability/**"),
-                                new AntPathRequestMatcher("/api/reviews/**")
-
+                                mvc.pattern("/api/bookings/**"),
+                                mvc.pattern("/api/reports/**"),
+                                mvc.pattern("/api/files/**"),
+                                mvc.pattern("/api/messages/**"),
+                                mvc.pattern("/api/notifications/**"),
+                                mvc.pattern("/api/availability/**"),
+                                mvc.pattern("/api/reviews/**")
                         ).authenticated()
 
-                        // Default fallback: any other request must be authenticated
+                        // Default fallback
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

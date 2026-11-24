@@ -1,144 +1,370 @@
 import React, { useState } from 'react';
-import { AppBar, Toolbar, Typography, Button, Box, TextField, InputAdornment, Container } from '@mui/material';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  Box,
+  Container,
+  Avatar,
+  IconButton,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+} from '@mui/material';
+import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import nftCoin from '../resources/nft.png';
-import { Search, PlusCircle, Leaf } from 'lucide-react';
+import {
+  Compass,
+  LayoutDashboard,
+  MessageSquare,
+  User,
+  LogOut,
+  Menu as MenuIcon,
+  X,
+  Plus,
+} from 'lucide-react';
 import NotificationBell from './NotificationBell';
+import { getFullMediaUrl } from '../services/api';
 
 const Navbar = () => {
   const { userProfile, logout } = useAuth();
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState('');
+  const location = useLocation();
 
-  const handleSearch = (e) => {
-    if (e.key === 'Enter' && searchTerm.trim() !== '') {
-      navigate(`/search?q=${encodeURIComponent(searchTerm.trim())}`);
-      setSearchTerm('');
-    }
-  };
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+
+  const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
+  const handleMenuClose = () => setAnchorEl(null);
 
   const handleLogout = () => {
+    handleMenuClose();
     logout();
     navigate('/');
   };
 
+  const isActive = (path) => location.pathname === path;
+
   return (
-    <AppBar position="static">
-      <Container maxWidth="xl">
-        <Toolbar disableGutters sx={{ minHeight: '72px !important', py: 0.5 }}>
-          <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', gap: 2 }}>
-
-            {/* Logo */}
-            <Box
-              component={RouterLink}
-              to="/"
-              sx={{ display: 'flex', alignItems: 'center', gap: 1, textDecoration: 'none', flexShrink: 0 }}
+    <AppBar
+      position="sticky"
+      elevation={0}
+      sx={{
+        top: 0,
+        zIndex: 1100,
+        backgroundColor: 'rgba(251, 250, 247, 0.94)',
+        backdropFilter: 'blur(12px)',
+        borderBottom: '1px solid rgba(10, 51, 28, 0.08)',
+      }}
+    >
+      <Container maxWidth="lg">
+        <Toolbar
+          disableGutters
+          sx={{
+            height: 64,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          {/* Logo */}
+          <Box
+            component={RouterLink}
+            to="/"
+            sx={{
+              textDecoration: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+            }}
+          >
+            <Typography
+              sx={{
+                fontFamily: '"Syne", sans-serif',
+                fontWeight: 800,
+                fontSize: '1.15rem',
+                letterSpacing: '-0.02em',
+                color: '#0a331c',
+              }}
             >
-              <Box sx={{
-                width: 36, height: 36, borderRadius: '10px',
-                backgroundColor: 'primary.main',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
-                <Leaf size={20} color="#ffffff" />
-              </Box>
-              <Typography
-                variant="h6"
-                sx={{ color: 'primary.main', fontFamily: '"Outfit", sans-serif', fontWeight: 700, display: { xs: 'none', sm: 'block' } }}
-              >
-                SkillVerse
-              </Typography>
-            </Box>
+              SKILLVERSE
+            </Typography>
+          </Box>
 
-            {/* Centered Search bar */}
-            <Box sx={{ flexGrow: 1, maxWidth: { xs: '180px', sm: '280px', md: '420px' }, mx: 'auto' }}>
-              <TextField
-                fullWidth
-                size="small"
-                variant="outlined"
-                placeholder="Search for skills or people..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onKeyDown={handleSearch}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Search size={16} style={{ color: '#9ca3af' }} />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Box>
+          {/* Desktop Links */}
+          <Box
+            sx={{
+              display: { xs: 'none', md: 'flex' },
+              alignItems: 'center',
+              gap: 3,
+            }}
+          >
+            <Typography
+              component={RouterLink}
+              to="/discover"
+              sx={{
+                fontSize: '0.875rem',
+                fontWeight: isActive('/discover') ? 700 : 500,
+                color: isActive('/discover') ? '#0a331c' : '#4f6055',
+                textDecoration: 'none',
+                transition: 'color 0.2s ease',
+                '&:hover': { color: '#0a331c' },
+              }}
+            >
+              Explore
+            </Typography>
 
-            {/* Navigation Items */}
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 'auto', flexShrink: 0 }}>
+            {userProfile && (
+              <>
+                <Typography
+                  component={RouterLink}
+                  to="/create-listing"
+                  sx={{
+                    fontSize: '0.875rem',
+                    fontWeight: isActive('/create-listing') ? 700 : 500,
+                    color: isActive('/create-listing') ? '#0a331c' : '#4f6055',
+                    textDecoration: 'none',
+                    transition: 'color 0.2s ease',
+                    '&:hover': { color: '#0a331c' },
+                  }}
+                >
+                  Teach
+                </Typography>
+
+                <Typography
+                  component={RouterLink}
+                  to="/inbox"
+                  sx={{
+                    fontSize: '0.875rem',
+                    fontWeight: isActive('/inbox') ? 700 : 500,
+                    color: isActive('/inbox') ? '#0a331c' : '#4f6055',
+                    textDecoration: 'none',
+                    transition: 'color 0.2s ease',
+                    '&:hover': { color: '#0a331c' },
+                  }}
+                >
+                  Inbox
+                </Typography>
+
+                <Typography
+                  component={RouterLink}
+                  to="/dashboard"
+                  sx={{
+                    fontSize: '0.875rem',
+                    fontWeight: isActive('/dashboard') ? 700 : 500,
+                    color: isActive('/dashboard') ? '#0a331c' : '#4f6055',
+                    textDecoration: 'none',
+                    transition: 'color 0.2s ease',
+                    '&:hover': { color: '#0a331c' },
+                  }}
+                >
+                  Dashboard
+                </Typography>
+              </>
+            )}
+          </Box>
+
+          {/* Right Action / Profile */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            {userProfile ? (
+              <>
+                {/* Minimal Token Pill */}
+                <Box
+                  component={RouterLink}
+                  to="/dashboard"
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.8,
+                    px: 1.2,
+                    py: 0.4,
+                    borderRadius: '50px',
+                    backgroundColor: '#ffffff',
+                    border: '1px solid rgba(10, 51, 28, 0.12)',
+                    textDecoration: 'none',
+                    transition: 'border-color 0.2s ease',
+                    '&:hover': { borderColor: '#0a331c' },
+                  }}
+                >
+                  <Box component="img" src={nftCoin} alt="Token" sx={{ width: 14, height: 14 }} />
+                  <Typography
+                    sx={{
+                      fontFamily: '"Space Mono", monospace',
+                      fontSize: '0.8rem',
+                      fontWeight: 700,
+                      color: '#0a331c',
+                    }}
+                  >
+                    {Number(userProfile.tokenBalance || 0).toFixed(0)}
+                  </Typography>
+                </Box>
+
+                <NotificationBell />
+
+                {/* Avatar menu */}
+                <IconButton onClick={handleMenuOpen} sx={{ p: 0.3 }}>
+                  <Avatar
+                    src={getFullMediaUrl(userProfile.avatarUrl)}
+                    alt={userProfile.name}
+                    sx={{
+                      width: 32,
+                      height: 32,
+                      fontSize: '0.8rem',
+                      fontWeight: 700,
+                      bgcolor: '#0a331c',
+                    }}
+                  >
+                    {userProfile.name?.charAt(0) || 'U'}
+                  </Avatar>
+                </IconButton>
+              </>
+            ) : (
               <Button
                 component={RouterLink}
-                to="/discover"
-                sx={{ color: 'text.primary', fontWeight: 600, display: { xs: 'none', md: 'inline-flex' }, '&:hover': { backgroundColor: 'transparent', color: 'primary.main' } }}
+                to="/signin"
+                variant="contained"
+                size="small"
+                sx={{
+                  backgroundColor: '#0a331c',
+                  color: '#ffffff',
+                  borderRadius: '50px',
+                  px: 2.2,
+                  py: 0.6,
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  textTransform: 'none',
+                  boxShadow: 'none',
+                  '&:hover': { backgroundColor: '#16482a', boxShadow: 'none' },
+                }}
               >
-                Discover
+                Sign In
               </Button>
+            )}
 
-              {userProfile ? (
-                <>
-                  <Button
-                    component={RouterLink}
-                    to="/create-listing"
-                    sx={{ color: 'text.secondary', display: { xs: 'none', lg: 'inline-flex' }, '&:hover': { backgroundColor: 'transparent', color: 'primary.main' } }}
-                  >
-                    <PlusCircle size={16} style={{ marginRight: '4px' }} /> Create
-                  </Button>
-
-                  <Box sx={{
-                    display: 'inline-flex', alignItems: 'center',
-                    backgroundColor: '#f1f4ec', borderRadius: '50px', px: 1.5, py: 0.5,
-                  }}>
-                    <img src={nftCoin} alt="Token" style={{ width: '18px', height: '18px', marginRight: '5px' }} />
-                    <Typography sx={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '0.85rem', color: 'primary.main' }}>
-                      {userProfile.tokenBalance.toFixed(2)}
-                    </Typography>
-                  </Box>
-
-                  <Button
-                    component={RouterLink}
-                    to="/dashboard"
-                    sx={{ color: 'text.secondary', display: { xs: 'none', md: 'inline-flex' }, '&:hover': { backgroundColor: 'transparent', color: 'primary.main' } }}
-                  >
-                    Dashboard
-                  </Button>
-                  <Button
-                    component={RouterLink}
-                    to="/inbox"
-                    sx={{ color: 'text.secondary', display: { xs: 'none', md: 'inline-flex' }, '&:hover': { backgroundColor: 'transparent', color: 'primary.main' } }}
-                  >
-                    Inbox
-                  </Button>
-                  <NotificationBell />
-                  <Button
-                    component={RouterLink}
-                    to="/profile"
-                    variant="contained"
-                    color="primary"
-                  >
-                    My Profile
-                  </Button>
-                  <Button
-                    onClick={handleLogout}
-                    sx={{ color: 'text.secondary', fontSize: '0.85rem', '&:hover': { backgroundColor: 'transparent', color: 'error.main' } }}
-                  >
-                    Log Out
-                  </Button>
-                </>
-              ) : (
-                <Button component={RouterLink} to="/signin" variant="contained" color="primary">
-                  Sign In
-                </Button>
-              )}
-            </Box>
+            {/* Mobile menu trigger */}
+            <IconButton
+              onClick={() => setMobileDrawerOpen(true)}
+              sx={{ display: { xs: 'flex', md: 'none' }, color: '#0a331c' }}
+            >
+              <MenuIcon size={20} />
+            </IconButton>
           </Box>
         </Toolbar>
       </Container>
+
+      {/* User Dropdown */}
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
+        PaperProps={{
+          elevation: 0,
+          sx: {
+            mt: 1.5,
+            borderRadius: '16px',
+            minWidth: 180,
+            border: '1px solid rgba(10, 51, 28, 0.1)',
+            boxShadow: '0 12px 32px -8px rgba(10, 51, 28, 0.1)',
+            p: 0.5,
+          },
+        }}
+      >
+        <MenuItem
+          component={RouterLink}
+          to="/profile"
+          onClick={handleMenuClose}
+          sx={{ borderRadius: '8px', fontSize: '0.875rem' }}
+        >
+          <ListItemIcon sx={{ minWidth: 30 }}><User size={16} /></ListItemIcon>
+          Profile
+        </MenuItem>
+        <MenuItem
+          component={RouterLink}
+          to="/dashboard"
+          onClick={handleMenuClose}
+          sx={{ borderRadius: '8px', fontSize: '0.875rem' }}
+        >
+          <ListItemIcon sx={{ minWidth: 30 }}><LayoutDashboard size={16} /></ListItemIcon>
+          Dashboard
+        </MenuItem>
+        <Divider sx={{ my: 0.5 }} />
+        <MenuItem
+          onClick={handleLogout}
+          sx={{ borderRadius: '8px', fontSize: '0.875rem', color: '#c02626' }}
+        >
+          <ListItemIcon sx={{ minWidth: 30, color: '#c02626' }}><LogOut size={16} /></ListItemIcon>
+          Sign Out
+        </MenuItem>
+      </Menu>
+
+      {/* Mobile Drawer */}
+      <Drawer
+        anchor="right"
+        open={mobileDrawerOpen}
+        onClose={() => setMobileDrawerOpen(false)}
+        PaperProps={{ sx: { width: 260, p: 2.5, backgroundColor: '#fbfaf7' } }}
+      >
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+          <Typography sx={{ fontFamily: '"Syne", sans-serif', fontWeight: 800, color: '#0a331c' }}>
+            SKILLVERSE
+          </Typography>
+          <IconButton onClick={() => setMobileDrawerOpen(false)}><X size={18} /></IconButton>
+        </Box>
+        <List sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+          <ListItem disablePadding>
+            <ListItemButton
+              component={RouterLink}
+              to="/discover"
+              onClick={() => setMobileDrawerOpen(false)}
+              sx={{ borderRadius: '8px', fontWeight: 600, color: '#0a331c' }}
+            >
+              Explore
+            </ListItemButton>
+          </ListItem>
+          {userProfile && (
+            <>
+              <ListItem disablePadding>
+                <ListItemButton
+                  component={RouterLink}
+                  to="/create-listing"
+                  onClick={() => setMobileDrawerOpen(false)}
+                  sx={{ borderRadius: '8px', fontWeight: 600, color: '#0a331c' }}
+                >
+                  Teach a Skill
+                </ListItemButton>
+              </ListItem>
+              <ListItem disablePadding>
+                <ListItemButton
+                  component={RouterLink}
+                  to="/inbox"
+                  onClick={() => setMobileDrawerOpen(false)}
+                  sx={{ borderRadius: '8px', fontWeight: 600, color: '#0a331c' }}
+                >
+                  Inbox
+                </ListItemButton>
+              </ListItem>
+              <ListItem disablePadding>
+                <ListItemButton
+                  component={RouterLink}
+                  to="/dashboard"
+                  onClick={() => setMobileDrawerOpen(false)}
+                  sx={{ borderRadius: '8px', fontWeight: 600, color: '#0a331c' }}
+                >
+                  Dashboard
+                </ListItemButton>
+              </ListItem>
+            </>
+          )}
+        </List>
+      </Drawer>
     </AppBar>
   );
 };

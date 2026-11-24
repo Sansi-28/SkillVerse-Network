@@ -1,27 +1,29 @@
-import axios from 'axios';
-const BASE = process.env.REACT_APP_API_URL + '/api/availability';
-const BOOK = process.env.REACT_APP_API_URL + '/api/bookings';
+import api from './api';
 
 export const listOpenSlots = async (teacherId) => {
-  const res = await axios.get(`${BASE}/teachers/${teacherId}/slots`);
+  const res = await api.get(`/api/availability/teachers/${teacherId}/slots`);
   return res.data;
 };
 
 export const listMySlots = async (token) => {
-  const res = await axios.get(`${BASE}/me/slots`, { headers: { Authorization: `Bearer ${token}` }});
+  const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+  const res = await api.get('/api/availability/me/slots', config);
   return res.data;
 };
 
 export const createSlot = async (slot, token) => {
-  const res = await axios.post(`${BASE}/slots`, slot, { headers: { Authorization: `Bearer ${token}` }});
+  const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+  const res = await api.post('/api/availability/slots', slot, config);
   return res.data;
 };
 
 export const deleteSlot = async (slotId, token) => {
-  await axios.delete(`${BASE}/slots/${slotId}`, { headers: { Authorization: `Bearer ${token}` }});
+  const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+  await api.delete(`/api/availability/slots/${slotId}`, config);
 };
 
 export const bookFromSlot = async ({ slotId, listingId }, token) => {
-  const res = await axios.post(`${BOOK}/from-slot`, { slotId, listingId }, { headers: { Authorization: `Bearer ${token}` }});
+  const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+  const res = await api.post('/api/bookings/from-slot', { slotId, listingId }, config);
   return res.data;
 };

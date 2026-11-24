@@ -1,17 +1,18 @@
-import axios from 'axios';
-
-const API = process.env.REACT_APP_API_URL + '/api/notifications';
+import api from './api';
 
 export const listNotifications = async (token) => {
-  const res = await axios.get(API, { headers: { Authorization: `Bearer ${token}` } });
+  const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+  const res = await api.get('/api/notifications', config);
   return res.data;
 };
 
 export const unreadCount = async (token) => {
-  const res = await axios.get(`${API}/unread-count`, { headers: { Authorization: `Bearer ${token}` } });
-  return res.data.count;
+  const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+  const res = await api.get('/api/notifications/unread-count', config);
+  return res.data?.count || 0;
 };
 
 export const markNotificationRead = async (id, token) => {
-  await axios.post(`${API}/${id}/read`, null, { headers: { Authorization: `Bearer ${token}` } });
+  const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+  await api.post(`/api/notifications/${id}/read`, null, config);
 };

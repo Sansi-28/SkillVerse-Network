@@ -45,12 +45,12 @@ public class FileController {
             Path file = Paths.get("uploads").resolve(filename);
             Resource resource = new UrlResource(file.toUri());
 
-            if (resource.exists() || resource.isReadable()) {
+            if (resource.exists() && resource.isReadable()) {
                 return ResponseEntity.ok()
                         .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
                         .body(resource);
             } else {
-                throw new RuntimeException("Could not read the file!");
+                return ResponseEntity.notFound().build();
             }
         } catch (MalformedURLException e) {
             throw new RuntimeException("Error: " + e.getMessage());
